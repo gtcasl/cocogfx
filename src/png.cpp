@@ -4,13 +4,13 @@
 #include <iostream>
 #include <cstring>
 
-namespace cocogfx {
+using namespace cocogfx;
 
-int LoadPNG(const char *filename, 
-            std::vector<uint8_t> &pixels, 
-            uint32_t *width,
-            uint32_t *height,
-            uint32_t *bpp) {
+int cocogfx::LoadPNG(const char *filename, 
+                     std::vector<uint8_t> &pixels, 
+                     uint32_t *width,
+                     uint32_t *height,
+                     uint32_t *bpp) {
     auto image = luPngReadFile(filename, NULL);
     if (image == NULL)
       return -1;
@@ -33,11 +33,11 @@ int LoadPNG(const char *filename,
     return 0;
 }
 
-int SavePNG(const char *filename, 
-            const std::vector<uint8_t> &pixels, 
-            uint32_t width,
-            uint32_t height, 
-            uint32_t bpp) {
+int cocogfx::SavePNG(const char *filename, 
+                     const std::vector<uint8_t> &pixels, 
+                     uint32_t width,
+                     uint32_t height, 
+                     uint32_t bpp) {
     LuImage image;
     image.width    = width;
     image.height   = height;
@@ -45,6 +45,4 @@ int SavePNG(const char *filename,
     image.channels = bpp;
     image.data     = (uint8_t*)pixels.data();
     return luPngWriteFile(filename, &image);            
-}
-
 }

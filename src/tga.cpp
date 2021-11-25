@@ -2,7 +2,7 @@
 #include <fstream>
 #include <iostream>
 
-namespace cocogfx {
+using namespace cocogfx;
 
 struct __attribute__((__packed__)) tga_header_t {
   int8_t idlength;
@@ -19,11 +19,11 @@ struct __attribute__((__packed__)) tga_header_t {
   int8_t imagedescriptor;
 };
 
-int LoadTGA(const char *filename, 
-            std::vector<uint8_t> &pixels, 
-            uint32_t *width, 
-            uint32_t *height,
-            uint32_t *bpp) {
+int cocogfx::LoadTGA(const char *filename, 
+                     std::vector<uint8_t> &pixels, 
+                     uint32_t *width, 
+                     uint32_t *height,
+                     uint32_t *bpp) {
   std::ifstream ifs(filename, std::ios::in | std::ios::binary);
   if (!ifs.is_open()) {
     std::cerr << "couldn't open file: " << filename << "!" << std::endl;
@@ -74,11 +74,11 @@ int LoadTGA(const char *filename,
   return 0;
 }
 
-int SaveTGA(const char *filename, 
-            const std::vector<uint8_t> &pixels, 
-            uint32_t width, 
-            uint32_t height, 
-            uint32_t bpp) {              
+int cocogfx::SaveTGA(const char *filename, 
+                     const std::vector<uint8_t> &pixels, 
+                     uint32_t width, 
+                     uint32_t height, 
+                     uint32_t bpp) {              
   std::ofstream ofs(filename, std::ios::out | std::ios::binary);
   if (!ofs.is_open()) {
     std::cerr << "couldn't create file: " << filename << "!" << std::endl;
@@ -120,6 +120,4 @@ int SaveTGA(const char *filename,
   }
 
   return 0;
-}
-
 }

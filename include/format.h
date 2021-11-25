@@ -14,7 +14,7 @@
 //
 #pragma once
 
-#include "int24.h"
+#include "uint24.h"
 #include "color.h"
 //#include <type_traits>
 
@@ -50,11 +50,11 @@ enum ePixelFormat {
   FORMAT_SIZE_,
 };
 
-#define FORMAT_A FORMAT_A8
-#define FORMAT_RGB FORMAT_R5G6B5
-#define FORMAT_RGB_ FORMAT_R8G8B8
-#define FORMAT_ARGB FORMAT_A8R8G8B8
-#define FORMAT_ARGB_ FORMAT_A4R4G4B4
+#define FORMAT_A      FORMAT_A8
+#define FORMAT_RGB    FORMAT_R5G6B5
+#define FORMAT_RGB_   FORMAT_R8G8B8
+#define FORMAT_ARGB   FORMAT_A8R8G8B8
+#define FORMAT_ARGB_  FORMAT_A4R4G4B4
 
 template <ePixelFormat PixelFormat>
 struct TFormatInfo {};
@@ -629,7 +629,7 @@ inline static pfn_convert_from GetConvertFrom(ePixelFormat pixelFormat,
   return nullptr;
 }
 
-inline static uint32_t GetNativeFormat(ePixelFormat pixelFormat) {
+inline static ePixelFormat GetNativeFormat(ePixelFormat pixelFormat) {
   switch (pixelFormat) {
   case FORMAT_PAL4_B8G8R8:
   case FORMAT_PAL8_B8G8R8:
@@ -935,6 +935,9 @@ template <>
 inline ColorARGB ConvertFrom<FORMAT_A8, true>(uint32_t in) {
   ColorARGB ret;
   ret.a = in;
+  ret.r = 0xff;
+  ret.g = 0xff;
+  ret.b = 0xff;
   return ret;
 }
 
@@ -1009,7 +1012,7 @@ inline ColorARGB ConvertFrom<FORMAT_D16, false>(uint32_t in) {
 
 template <>
 inline uint32_t ConvertTo<FORMAT_X8S8D16>(const ColorARGB &in) {
-  return in.b;
+  return in.value;
 }
 
 template <>

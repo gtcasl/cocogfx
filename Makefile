@@ -1,5 +1,5 @@
-CXXFLAGS += -std=c++11 -fPIC -O3 -Wall -Wextra -Wfatal-errors
-#CXXFLAGS += -std=c++11 -fPIC -O0 -g -Wall -Wextra -Wfatal-errors
+#CXXFLAGS += -std=c++11 -fPIC -O3 -Wall -Wextra -Wfatal-errors
+CXXFLAGS += -std=c++11 -fPIC -O0 -g -Wall -Wextra -Wfatal-errors
 
 CXXFLAGS += -DLUPNG_USE_ZLIB -Iinclude
 
