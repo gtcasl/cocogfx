@@ -60,10 +60,6 @@ struct ColorARGB {
     this->value = value;
   }
 
-  void operator=(const ColorARGB &rhs) {
-    this->value = rhs.value;
-  }
-
   operator uint32_t() const {
     return this->value;
   }
