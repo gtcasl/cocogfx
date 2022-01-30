@@ -1,7 +1,6 @@
 #include "blitter.h"
 #include "color.h"
 #include "format.h"
-#include "int24.h"
+#include "uint24.h"
 #include "tga.h"
 #include "png.h"
-#include "texturing.h"

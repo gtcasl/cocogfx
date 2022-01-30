@@ -6,6 +6,7 @@
 using namespace cocogfx;
 
 namespace {
+
 constexpr uint32_t count_leading_zeros(uint32_t value) {
   return value ? __builtin_clz(value) : 32;
 }
@@ -14,285 +15,109 @@ constexpr uint32_t log2ceil(uint32_t value) {
   return 32 - count_leading_zeros(value - 1);
 }
 
-struct SurfaceDesc {
-  ePixelFormat Format;
-  uint8_t *pBits;
-  uint32_t Width;
-  uint32_t Height;
-  uint32_t Pitch;
-};
+}
 
-class BlitTable {
-public:
-  typedef int (*PfnCopy)(const SurfaceDesc &dstDesc, 
-                         uint32_t dstOffsetX,
-                         uint32_t dstOffsetY, 
-                         uint32_t copyWidth,
-                         uint32_t copyHeight, 
-                         const SurfaceDesc &srcDesc,
-                         uint32_t srcOffsetX, 
-                         uint32_t srcOffsetY);
-
-  BlitTable() {
-    for (uint32_t s = 0; s < FORMAT_COLOR_SIZE_; ++s) {
-      for (uint32_t d = 0; d < FORMAT_COLOR_SIZE_; ++d) {
-        copyFuncs_[s][d] = CopyInvalid;
-      }
-    }
-
-    for (uint32_t s = 0; s < FORMAT_COLOR_SIZE_; ++s) {
-      switch (s) {
-      case FORMAT_A8:
-      case FORMAT_L8:
-        copyFuncs_[s][s] = CopyFast<uint8_t>;
-        break;
-
-      case FORMAT_A8L8:
-        copyFuncs_[FORMAT_A8L8][FORMAT_A8] = Copy<FORMAT_A8L8, FORMAT_A8>;
-        copyFuncs_[FORMAT_A8L8][FORMAT_A8L8] = CopyFast<uint16_t>;
-        break;
-
-      case FORMAT_R5G6B5:
-        copyFuncs_[FORMAT_R5G6B5][FORMAT_L8] = Copy<FORMAT_R5G6B5, FORMAT_L8>;
-        copyFuncs_[FORMAT_R5G6B5][FORMAT_R5G6B5] = CopyFast<uint16_t>;
-        copyFuncs_[FORMAT_R5G6B5][FORMAT_R8G8B8] = Copy<FORMAT_R5G6B5, FORMAT_R8G8B8>;
-        copyFuncs_[FORMAT_R5G6B5][FORMAT_B8G8R8] = Copy<FORMAT_R5G6B5, FORMAT_B8G8R8>;
-        copyFuncs_[FORMAT_R5G6B5][FORMAT_A8B8G8R8] = Copy<FORMAT_R5G6B5, FORMAT_A8B8G8R8>;
-        copyFuncs_[FORMAT_R5G6B5][FORMAT_A8R8G8B8] = Copy<FORMAT_R5G6B5, FORMAT_A8R8G8B8>;
-        break;
-
-      case FORMAT_A1R5G5B5:
-        copyFuncs_[FORMAT_A1R5G5B5][FORMAT_A8] = Copy<FORMAT_A1R5G5B5, FORMAT_A8>;
-        copyFuncs_[FORMAT_A1R5G5B5][FORMAT_L8] = Copy<FORMAT_A1R5G5B5, FORMAT_L8>;
-        copyFuncs_[FORMAT_A1R5G5B5][FORMAT_A8L8] = Copy<FORMAT_A1R5G5B5, FORMAT_A8L8>;
-        copyFuncs_[FORMAT_A1R5G5B5][FORMAT_R8G8B8] =  Copy<FORMAT_A1R5G5B5, FORMAT_R8G8B8>;
-        copyFuncs_[FORMAT_A1R5G5B5][FORMAT_A8R8G8B8] = Copy<FORMAT_A1R5G5B5, FORMAT_A8R8G8B8>;
-        copyFuncs_[FORMAT_A1R5G5B5][FORMAT_R5G5B5A1] = Copy<FORMAT_A1R5G5B5, FORMAT_R5G5B5A1>;
-        copyFuncs_[FORMAT_A1R5G5B5][FORMAT_R4G4B4A4] = Copy<FORMAT_A1R5G5B5, FORMAT_R4G4B4A4>;
-        copyFuncs_[FORMAT_A1R5G5B5][FORMAT_B8G8R8] = Copy<FORMAT_A1R5G5B5, FORMAT_B8G8R8>;
-        copyFuncs_[FORMAT_A1R5G5B5][FORMAT_A8B8G8R8] = Copy<FORMAT_A1R5G5B5, FORMAT_A8B8G8R8>;
-        break;
-
-      case FORMAT_A4R4G4B4:
-        copyFuncs_[FORMAT_A4R4G4B4][FORMAT_A8] = Copy<FORMAT_A4R4G4B4, FORMAT_A8>;
-        copyFuncs_[FORMAT_A4R4G4B4][FORMAT_L8] = Copy<FORMAT_A4R4G4B4, FORMAT_L8>;
-        copyFuncs_[FORMAT_A4R4G4B4][FORMAT_A8L8] = Copy<FORMAT_A4R4G4B4, FORMAT_A8L8>;
-        copyFuncs_[FORMAT_A4R4G4B4][FORMAT_R8G8B8] = Copy<FORMAT_A4R4G4B4, FORMAT_R8G8B8>;
-        copyFuncs_[FORMAT_A4R4G4B4][FORMAT_A8R8G8B8] = Copy<FORMAT_A4R4G4B4, FORMAT_A8R8G8B8>;
-        copyFuncs_[FORMAT_A4R4G4B4][FORMAT_R5G5B5A1] = Copy<FORMAT_A4R4G4B4, FORMAT_R5G5B5A1>;
-        copyFuncs_[FORMAT_A4R4G4B4][FORMAT_R4G4B4A4] = Copy<FORMAT_A4R4G4B4, FORMAT_R4G4B4A4>;
-        copyFuncs_[FORMAT_A4R4G4B4][FORMAT_B8G8R8] = Copy<FORMAT_A4R4G4B4, FORMAT_B8G8R8>;
-        copyFuncs_[FORMAT_A4R4G4B4][FORMAT_A8B8G8R8] = Copy<FORMAT_A4R4G4B4, FORMAT_A8B8G8R8>;
-        break;
-
-      case FORMAT_R8G8B8:
-        copyFuncs_[FORMAT_R8G8B8][FORMAT_L8] = Copy<FORMAT_R8G8B8, FORMAT_L8>;
-        copyFuncs_[FORMAT_R8G8B8][FORMAT_R5G6B5] = Copy<FORMAT_R8G8B8, FORMAT_R5G6B5>;
-        copyFuncs_[FORMAT_R8G8B8][FORMAT_R8G8B8] = CopyFast<uint24_t>;
-        copyFuncs_[FORMAT_R8G8B8][FORMAT_B8G8R8] = Copy<FORMAT_R8G8B8, FORMAT_B8G8R8>;
-        copyFuncs_[FORMAT_R8G8B8][FORMAT_A8B8G8R8] = Copy<FORMAT_R8G8B8, FORMAT_A8B8G8R8>;
-        copyFuncs_[FORMAT_R8G8B8][FORMAT_A8R8G8B8] = Copy<FORMAT_R8G8B8, FORMAT_A8R8G8B8>;
-        break;
-
-      case FORMAT_A8R8G8B8:
-        copyFuncs_[FORMAT_A8R8G8B8][FORMAT_A8] = Copy<FORMAT_A8R8G8B8, FORMAT_A8>;
-        copyFuncs_[FORMAT_A8R8G8B8][FORMAT_L8] = Copy<FORMAT_A8R8G8B8, FORMAT_L8>;
-        copyFuncs_[FORMAT_A8R8G8B8][FORMAT_A8L8] = Copy<FORMAT_A8R8G8B8, FORMAT_A8L8>;
-        copyFuncs_[FORMAT_A8R8G8B8][FORMAT_R5G6B5] = Copy<FORMAT_A8R8G8B8, FORMAT_R5G6B5>;
-        copyFuncs_[FORMAT_A8R8G8B8][FORMAT_R8G8B8] = Copy<FORMAT_A8R8G8B8, FORMAT_R8G8B8>;
-        copyFuncs_[FORMAT_A8R8G8B8][FORMAT_A8R8G8B8] = CopyFast<uint32_t>;
-        copyFuncs_[FORMAT_A8R8G8B8][FORMAT_R5G5B5A1] = Copy<FORMAT_A8R8G8B8, FORMAT_R5G5B5A1>;
-        copyFuncs_[FORMAT_A8R8G8B8][FORMAT_R4G4B4A4] = Copy<FORMAT_A8R8G8B8, FORMAT_R4G4B4A4>;
-        copyFuncs_[FORMAT_A8R8G8B8][FORMAT_B8G8R8] = Copy<FORMAT_A8R8G8B8, FORMAT_B8G8R8>;
-        copyFuncs_[FORMAT_A8R8G8B8][FORMAT_A8B8G8R8] = Copy<FORMAT_A8R8G8B8, FORMAT_A8B8G8R8>;
-        break;
-
-      case FORMAT_R5G5B5A1:
-        copyFuncs_[FORMAT_R5G5B5A1][FORMAT_A8] = Copy<FORMAT_R5G5B5A1, FORMAT_A8>;
-        copyFuncs_[FORMAT_R5G5B5A1][FORMAT_L8] = Copy<FORMAT_R5G5B5A1, FORMAT_L8>;
-        copyFuncs_[FORMAT_R5G5B5A1][FORMAT_A8L8] = Copy<FORMAT_R5G5B5A1, FORMAT_A8L8>;
-        copyFuncs_[FORMAT_R5G5B5A1][FORMAT_RGB] = Copy<FORMAT_R5G5B5A1, FORMAT_RGB>;
-        copyFuncs_[FORMAT_R5G5B5A1][FORMAT_ARGB] = Copy<FORMAT_R5G5B5A1, FORMAT_ARGB>;
-        break;
-
-      case FORMAT_R4G4B4A4:
-        copyFuncs_[FORMAT_R4G4B4A4][FORMAT_A8] = Copy<FORMAT_R4G4B4A4, FORMAT_A8>;
-        copyFuncs_[FORMAT_R4G4B4A4][FORMAT_L8] = Copy<FORMAT_R4G4B4A4, FORMAT_L8>;
-        copyFuncs_[FORMAT_R4G4B4A4][FORMAT_A8L8] = Copy<FORMAT_R4G4B4A4, FORMAT_A8L8>;
-        copyFuncs_[FORMAT_R4G4B4A4][FORMAT_RGB] = Copy<FORMAT_R4G4B4A4, FORMAT_RGB>;
-        copyFuncs_[FORMAT_R4G4B4A4][FORMAT_ARGB] = Copy<FORMAT_R4G4B4A4, FORMAT_ARGB>;
-        break;
-
-      case FORMAT_B8G8R8:
-        copyFuncs_[FORMAT_B8G8R8][FORMAT_L8] = Copy<FORMAT_B8G8R8, FORMAT_L8>;
-        copyFuncs_[FORMAT_B8G8R8][FORMAT_RGB] = Copy<FORMAT_B8G8R8, FORMAT_RGB>;
-        break;
-
-      case FORMAT_A8B8G8R8:
-        copyFuncs_[FORMAT_A8B8G8R8][FORMAT_A8] = Copy<FORMAT_A8B8G8R8, FORMAT_A8>;
-        copyFuncs_[FORMAT_A8B8G8R8][FORMAT_L8] = Copy<FORMAT_A8B8G8R8, FORMAT_L8>;
-        copyFuncs_[FORMAT_A8B8G8R8][FORMAT_A8L8] = Copy<FORMAT_A8B8G8R8, FORMAT_A8L8>;
-        copyFuncs_[FORMAT_A8B8G8R8][FORMAT_RGB] = Copy<FORMAT_A8B8G8R8, FORMAT_RGB>;
-        copyFuncs_[FORMAT_A8B8G8R8][FORMAT_ARGB] = Copy<FORMAT_A8B8G8R8, FORMAT_ARGB>;
-        break;
-      }
-    }
+int cocogfx::CopyBuffers(std::vector<uint8_t>& dst_pixels,
+                         ePixelFormat dst_format,
+                         uint32_t dst_width,
+                         uint32_t dst_height,
+                         uint32_t dst_pitch,
+                         uint32_t dst_offsetx,
+                         uint32_t dst_offsety,                
+                         const std::vector<uint8_t>& src_pixels,
+                         ePixelFormat src_format,
+                         uint32_t src_width,
+                         uint32_t src_height,
+                         uint32_t src_pitch,
+                         uint32_t src_offsetx,
+                         uint32_t src_offsety,                                     
+                         uint32_t width, 
+                         uint32_t height) {  
+  auto& src_fmtinfo = GetInfo(src_format);
+  auto& dst_fmtinfo = GetInfo(dst_format);
+  
+  if ((src_fmtinfo.Depth || src_fmtinfo.Stencil) ^ (dst_fmtinfo.Depth || dst_fmtinfo.Stencil)) {
+    std::cerr << "non-compatible formats" << std::endl;
+    return -1;
+  }
+    
+  if (((src_offsetx + width)  > src_width) 
+   || ((src_offsety + height) > src_height)) {
+    std::cerr << "out of range source region" << std::endl;
+    return -1;
   }
 
-  PfnCopy get(uint32_t srcFormat, uint32_t dstFormat) const {
-    assert(srcFormat < FORMAT_COLOR_SIZE_);
-    assert(dstFormat < FORMAT_COLOR_SIZE_);
-    return copyFuncs_[srcFormat][dstFormat];
+  if (((dst_offsetx + width)  > dst_width) 
+   || ((dst_offsety + height) > dst_height)) {
+    std::cerr << "out of range destination region" << std::endl;
+    return -1;
   }
 
-private:
-  template <ePixelFormat SrcFormat, ePixelFormat DstFormat>
-  static int Copy(const SurfaceDesc &dstDesc, 
-                  uint32_t dstOffsetX,
-                  uint32_t dstOffsetY, 
-                  uint32_t copyWidth,
-                  uint32_t copyHeight, 
-                  const SurfaceDesc &srcDesc,
-                  uint32_t srcOffsetX, 
-                  uint32_t srcOffsetY) {
-    auto srcBPP = TFormatInfo<SrcFormat>::CBSIZE;
-    auto dstBPP = TFormatInfo<DstFormat>::CBSIZE;
-    auto srcNextLine = srcDesc.Pitch;
-    auto dstNextLine = dstDesc.Pitch;
+  if (((src_offsety + height) * src_pitch) > src_pixels.size()) {
+    std::cerr << "out of range source buffer" << std::endl;
+    return -1;
+  }
 
-    auto pbSrc = srcDesc.pBits + srcOffsetX * srcBPP + srcOffsetY * srcDesc.Pitch;
-    auto pbDst = dstDesc.pBits + dstOffsetX * dstBPP + dstOffsetY * dstDesc.Pitch;
+  if (((dst_offsety + height) * dst_pitch) > dst_pixels.size()) {
+    std::cerr << "out of range destination buffer" << std::endl;
+    return -1;
+  }
 
-    while (copyHeight--) {
-      auto pSrc = reinterpret_cast<const typename TFormatInfo<SrcFormat>::TYPE *>(pbSrc);
-      for (auto *pDst = reinterpret_cast<typename TFormatInfo<DstFormat>::TYPE *>(pbDst),
-          *const pEnd = pDst + copyWidth; pDst != pEnd; ++pDst, ++pSrc) {
-        auto tmp = ConvertFrom<SrcFormat, true>(pSrc);
-        ConvertTo<DstFormat>(pDst, tmp);
-      }
-      pbSrc += srcNextLine;
-      pbDst += dstNextLine;
+  auto src_stride = src_fmtinfo.BytePerPixel;
+  auto dst_stride = dst_fmtinfo.BytePerPixel;
+
+  auto pbSrc = src_pixels.data() + src_offsetx * src_stride + src_offsety * src_pitch;
+  auto pbDst = dst_pixels.data() + dst_offsetx * dst_stride + dst_offsety * dst_pitch;
+
+  auto src_nformat = GetNativeFormat((ePixelFormat)src_format);
+  auto dst_nformat = GetNativeFormat((ePixelFormat)dst_format);
+
+  if (src_nformat == dst_nformat) {
+    while (height--) {
+      memcpy(pbDst, pbSrc, src_stride * width);        
+      pbDst += dst_pitch;
+      pbSrc += src_pitch;
+    }
+  } else {
+    auto convert_from = GetConvertFrom(src_nformat, true);
+    auto convert_to = GetConvertTo(dst_nformat);
+    while (height--) {
+      uint8_t *pbD = pbDst; 
+      for (auto *pbS = pbSrc, 
+          *const pbE = pbS + src_stride * width; pbS != pbE;) {
+        auto color = convert_from(pbS);
+        convert_to(pbD, color);
+        pbD += dst_stride;
+        pbS += src_stride;
+      }      
+      pbDst += dst_pitch;
+      pbSrc += src_pitch;
     }    
-    return 0;
   }
 
-  template <typename Type>
-  static int CopyFast(const SurfaceDesc &dstDesc, 
-                      uint32_t dstOffsetX,
-                      uint32_t dstOffsetY, 
-                      uint32_t copyWidth,
-                      uint32_t copyHeight, 
-                      const SurfaceDesc &srcDesc,
-                      uint32_t srcOffsetX, 
-                      uint32_t srcOffsetY) {
-    auto nBPP = sizeof(Type);
-    auto srcNextLine = srcDesc.Pitch;
-    auto dstNextLine = dstDesc.Pitch;
-
-    auto pbSrc = srcDesc.pBits + srcOffsetX * nBPP + srcOffsetY * srcNextLine;
-    auto pbDst = dstDesc.pBits + dstOffsetX * nBPP + dstOffsetY * dstNextLine;
-
-    if (srcNextLine == dstNextLine) {
-      memcpy(pbDst, pbSrc, srcNextLine * copyHeight);
-    } else {
-      while (copyHeight--) {
-        auto pSrc = reinterpret_cast<const Type *>(pbSrc);
-        for (auto *pDst = reinterpret_cast<Type *>(pbDst), *const pEnd = pDst + copyWidth;
-            pDst != pEnd; ++pDst, ++pSrc) {
-          *pDst = *pSrc;
-        }
-        pbSrc += srcNextLine;
-        pbDst += dstNextLine;
-      }
-    }
-
-    return 0;
-  }
-
-  static int CopyInvalid(const SurfaceDesc & /*dstDesc*/,
-                         uint32_t /*dstOffsetX*/, 
-                         uint32_t /*dstOffsetY*/,
-                         uint32_t /*copyWidth*/, 
-                         uint32_t /*copyHeight*/,
-                         const SurfaceDesc & /*srcDesc*/,
-                         uint32_t /*srcOffsetX*/, 
-                         uint32_t /*srcOffsetY*/)
-  {
-    std::cout << "Error: invalid format" << std::endl;
-    return -1;
-  }
-
-  PfnCopy copyFuncs_[FORMAT_COLOR_SIZE_][FORMAT_COLOR_SIZE_];
-};
-
-static const BlitTable s_blitTable;
+  return 0;
 }
 
-namespace cocogfx {
-
-int CopyBuffers(ePixelFormat dst_format,
-                uint8_t *dst_pixels,
-                uint32_t dst_width,
-                uint32_t dst_height,
-                uint32_t dst_pitch,
-                int32_t dst_offsetx,
-                int32_t dst_offsety,
-                ePixelFormat src_format,
-                const uint8_t *src_pixels,
-                uint32_t src_width,
-                uint32_t src_height,
-                uint32_t src_pitch,
-                int32_t src_offsetx,
-                int32_t src_offsety,                                     
-                uint32_t width, 
-                uint32_t height) {  
-  if ((src_offsetx >= (int32_t)src_width) || (src_offsety >= (int32_t)src_height) ||
-      (dst_offsetx >= (int32_t)dst_width) || (dst_offsety >= (int32_t)dst_height)) {
-    return -1;
-  }
-
-  if (width > dst_width) {
-    width = dst_width;
-  }
-
-  if (width > src_width) {
-    width = src_width;
-  }
-
-  if (height > dst_height) {
-    height = dst_height;
-  }
-
-  if (height > src_height) {
-    height = src_height;
-  }
-
-  SurfaceDesc src_desc{src_format, (uint8_t*)src_pixels, width, height, src_pitch};            
-  SurfaceDesc dst_desc{dst_format, dst_pixels, width, height, dst_pitch};
-
-  return s_blitTable.get(src_format, dst_format)(
-    dst_desc, dst_offsetx, dst_offsety, width, height, src_desc, src_offsetx, src_offsety);
-}
-
-int ConvertImage(std::vector<uint8_t>& dst_pixels,
-                 const std::vector<uint8_t>& src_pixels,
-                 ePixelFormat src_format,
-                 uint32_t src_width,
-                 uint32_t src_height,                 
-                 ePixelFormat dst_format) {
-  uint32_t src_pitch = GetInfo(src_format).BytePerPixel * src_width;
+int cocogfx::ConvertImage(std::vector<uint8_t>& dst_pixels,
+                          ePixelFormat dst_format,
+                          const std::vector<uint8_t>& src_pixels,
+                          ePixelFormat src_format,
+                          uint32_t src_width,
+                          uint32_t src_height,                 
+                          uint32_t src_pitch) {
   uint32_t dst_pitch = GetInfo(dst_format).BytePerPixel * src_width;
+
   dst_pixels.resize(dst_pitch * src_height);
 
   return CopyBuffers(    
-    dst_pixels.data(),
+    dst_pixels,
     dst_format,
     src_width,
     src_height,
     dst_pitch,
     0,
     0,    
-    src_pixels.data(),
+    src_pixels,
     src_format,
     src_width,
     src_height,
@@ -304,19 +129,19 @@ int ConvertImage(std::vector<uint8_t>& dst_pixels,
   );
 }
 
-int GenerateMipmaps(std::vector<uint8_t>& dst_pixels,
-                    std::vector<uint32_t>& mip_offsets,
-                    const std::vector<uint8_t>& src_pixels,
-                    ePixelFormat format,
-                    uint32_t src_width,
-                    uint32_t src_height,
-                    uint32_t src_pitch) {
+int cocogfx::GenerateMipmaps(std::vector<uint8_t>& dst_pixels,
+                             std::vector<uint32_t>& mip_offsets,
+                             const std::vector<uint8_t>& src_pixels,
+                             ePixelFormat format,
+                             uint32_t src_width,
+                             uint32_t src_height,
+                             uint32_t src_pitch) {
   uint32_t bpp = GetInfo(format).BytePerPixel;
   uint32_t src_logwidth  = log2ceil(src_width);
   uint32_t src_logheight = log2ceil(src_height);
   uint32_t num_mipmaps   = std::max(src_logwidth, src_logheight) + 1;
-  auto fmt_convert_from  = GetConvertFrom(format, true);
-  auto fmt_convert_to    = GetConvertTo(format);
+  auto convert_from      = GetConvertFrom(format, true);
+  auto convert_to        = GetConvertTo(format);
 
   mip_offsets.resize(num_mipmaps);
 
@@ -337,20 +162,22 @@ int GenerateMipmaps(std::vector<uint8_t>& dst_pixels,
 
   // generate mipmaps  
   {
+    // copy level 0
+    CopyBuffers(
+      dst_pixels, format, src_width, src_height, src_width * bpp,
+      0, 0,
+      src_pixels, format, src_width, src_height, src_pitch,
+      0, 0, src_width, src_height
+    );    
+    
+    // copy lower levels
+    
     auto pSrc = src_pixels.data();
     auto pDst = dst_pixels.data();
 
-    // copy level 0
-    CopyBuffers(
-      pDst, format, src_width, src_height, src_width * bpp,
-      0, 0,
-      pSrc, format, src_width, src_height, src_pitch,
-      0, 0, src_width, src_height
-    );    
     pSrc = pDst;
     pDst += src_width * src_height * bpp;
 
-    // copy lower levels
     for (uint32_t lod = 1, w = (src_width/2), h = (src_height/2); lod < num_mipmaps;) {
       assert((w > 0) || (w > 0));
       uint32_t pw = std::max<int>(w, 1);
@@ -366,17 +193,17 @@ int GenerateMipmaps(std::vector<uint8_t>& dst_pixels,
           uint32_t u0 = 2 * x;
           uint32_t u1 = 2 * x + ((pw > 1) ? 1 : 0);
 
-          auto c00 = fmt_convert_from(pSrc + (u0 + p0) * bpp);
-          auto c01 = fmt_convert_from(pSrc + (u1 + p0) * bpp);
-          auto c10 = fmt_convert_from(pSrc + (u0 + p1) * bpp);
-          auto c11 = fmt_convert_from(pSrc + (u1 + p1) * bpp);
+          auto c00 = convert_from(pSrc + (u0 + p0) * bpp);
+          auto c01 = convert_from(pSrc + (u1 + p0) * bpp);
+          auto c10 = convert_from(pSrc + (u0 + p1) * bpp);
+          auto c11 = convert_from(pSrc + (u1 + p1) * bpp);
 
-          const ColorARGB color((c00.a + c01.a + c10.a + c11.a+2) >> 2,
-                                (c00.r + c01.r + c10.r + c11.r+2) >> 2,
-                                (c00.g + c01.g + c10.g + c11.g+2) >> 2,
-                                (c00.b + c01.b + c10.b + c11.b+2) >> 2);
+          auto a = (c00.a + c01.a + c10.a + c11.a + 2) >> 2;
+          auto r = (c00.r + c01.r + c10.r + c11.r + 2) >> 2;
+          auto g = (c00.g + c01.g + c10.g + c11.g + 2) >> 2;
+          auto b = (c00.b + c01.b + c10.b + c11.b + 2) >> 2;
                                 
-          fmt_convert_to(pDst + (x + y * pw) * bpp, color);
+          convert_to(pDst + (x + y * pw) * bpp, ColorARGB(a, r, g, b));
         }
       } 
       ++lod; 
@@ -393,6 +220,4 @@ int GenerateMipmaps(std::vector<uint8_t>& dst_pixels,
   }
 
   return 0;
-}
-
 }
