@@ -15,7 +15,8 @@
 #pragma once
 
 #include  <vector>
-#include "format.h"
+#include "common.hpp"
+#include "format.hpp"
 
 namespace cocogfx {
 

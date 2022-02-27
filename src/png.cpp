@@ -1,4 +1,4 @@
-#include "png.h"
+#include "png.hpp"
 #include "lupng.h"
 #include <fstream>
 #include <iostream>

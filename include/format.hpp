@@ -14,9 +14,9 @@
 //
 #pragma once
 
-#include "uint24.h"
-#include "color.h"
-//#include <type_traits>
+#include "common.hpp"
+#include "uint24.hpp"
+#include "color.hpp"
 
 namespace cocogfx {
 

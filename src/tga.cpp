@@ -1,4 +1,4 @@
-#include "tga.h"
+#include "tga.hpp"
 #include <fstream>
 #include <iostream>
 
