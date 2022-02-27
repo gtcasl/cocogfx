@@ -312,8 +312,6 @@ int32_t fxPow(int32_t x, int32_t y);
 
 int32_t fxExp2(int32_t x);
 
-int Inverse32(int value);
-
 } // namespace cocogfx
 
 namespace std {
@@ -379,8 +377,6 @@ public:
   inline static Type call(int value) {
     if constexpr (Shift >= 32) {
       return value ? static_cast<Type>((static_cast<int64_t>(1) << Shift) / value) : 0;
-    } else if (Shift == 32) {
-      Inverse32(value);
     } else {
       return static_cast<Type>((1 << Shift) / value);
     }
@@ -1329,6 +1325,42 @@ bool Intersect(TRect<T> *pDst, const TRect<T> *pSrc1, const TRect<T> *pSrc2) {
   pDst->right  = right;
   pDst->bottom = bottom;
   return true;
+}
+
+// Convert position from clip to 2D homogenous device space
+template <typename T>
+void ClipTo2DH(TVector4<T>* out, const TVector4<T>& in, uint32_t width, uint32_t height) {    
+    out->x = width * (in.x + in.w) / 2;
+    out->y = height * (in.y + in.w) / 2;
+    out->z = in.z;
+    out->w = in.w;
+}
+
+// Convert position from clip to screen space
+template <typename T>
+void ClipToScreen(TVector4<T>* out, const TVector4<T>& in, uint32_t width, uint32_t height) {
+    // Clip to NDC (normalized device-space coordinates)
+    auto rhw   = 1.0f / in.w;
+    auto ndc_x = in.x * rhw;
+    auto ndc_y = in.y * rhw;
+    auto ndc_z = in.z * rhw;
+    auto ndc_w = in.w;
+
+    // NDC to screen
+    out->x = width * (ndc_x + 1.0f) / 2;
+    out->y = height * (ndc_y + 1.0f) / 2;
+    out->z = ndc_z;
+    out->w = ndc_w;
+}
+
+// Calculate triangle bounding box
+template <typename T>
+void CalcBoundingBox(TRect<T>* pOut, const TVector2<T>& v0, const TVector2<T>& v1, const TVector2<T>& v2) {
+    // Find min/max 
+    pOut->left   = static_cast<int32_t>(std::min(v0.x, std::min(v1.x, v2.x)));
+    pOut->right  = static_cast<int32_t>(std::max(v0.x, std::max(v1.x, v2.x)));
+    pOut->top    = static_cast<int32_t>(std::min(v0.y, std::min(v1.y, v2.y)));
+    pOut->bottom = static_cast<int32_t>(std::max(v0.y, std::max(v1.y, v2.y)));
 }
 
 }
