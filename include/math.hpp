@@ -394,12 +394,12 @@ T Dot(const TVector4<T> &lhs, const TVector4<T> &rhs);
 ///////////////////////////////////////////////////////////////////////////////
 
 template <>
-TFixed<16> RSqrt(TFixed<16> rhs) {
+inline TFixed<16> RSqrt(TFixed<16> rhs) {
   return TFixed<16>::make(fxInvSqrt(rhs.data()));
 }
 
 template <>
-float RSqrt(float rhs) {
+inline float RSqrt(float rhs) {
   assert(rhs != 0.0f);
   return 1.0f / std::sqrt(rhs);
 }
@@ -462,16 +462,17 @@ TFixed<F,T> MulSub(TFixed<F,T> a0, TFixed<F,T> b0, TFixed<F,T> a1, TFixed<F,T> b
 }
 
 template <>
-float FromUNORM8<float>(int32_t rhs) {
+inline float FromUNORM8<float>(int32_t rhs) {
   return rhs * (1.0f / 255);
 }
 
 template <>
-TFixed<16> FromUNORM8<TFixed<16>>(int32_t rhs) {
+inline TFixed<16> FromUNORM8<TFixed<16>>(int32_t rhs) {
   return TFixed<16>::make((rhs << TFixed<16>::FRAC) / 255);
 }
+
 template <>
-int32_t FromUNORM8<int32_t>(int32_t rhs) {
+inline int32_t FromUNORM8<int32_t>(int32_t rhs) {
   return rhs;
 }
 
@@ -515,13 +516,13 @@ R Roundi(float rhs) {
 }
 
 template <>
-int32_t ToUNORM8(float rhs) {
+inline int32_t ToUNORM8(float rhs) {
   assert((rhs >= 0.0f) && (rhs <= 1.0f));
   return static_cast<int32_t>(0xff * rhs);
 }
 
 template <>
-int32_t ToUNORM16(float rhs) {
+inline int32_t ToUNORM16(float rhs) {
   assert((rhs >= 0.0f) && (rhs <= 1.0f));
   return static_cast<int32_t>(0xffff * rhs);
 }
@@ -759,7 +760,7 @@ R ShiftRight(TFixed<F,T> lhs, int32_t rhs) {
 //////////////////////////////////////////////////////////////////////////////
 
 template <>
-TFixed<16> Dot<TFixed<16>>(const TVector3<TFixed<16>> &lhs, const TVector3<TFixed<16>> &rhs) {
+inline TFixed<16> Dot<TFixed<16>>(const TVector3<TFixed<16>> &lhs, const TVector3<TFixed<16>> &rhs) {
   auto xx = static_cast<int64_t>(lhs.x.data()) * rhs.x.data();
   auto yy = static_cast<int64_t>(lhs.y.data()) * rhs.y.data();
   auto zz = static_cast<int64_t>(lhs.z.data()) * rhs.z.data();
@@ -767,7 +768,7 @@ TFixed<16> Dot<TFixed<16>>(const TVector3<TFixed<16>> &lhs, const TVector3<TFixe
 }
 
 template <>
-TFixed<16> Dot<TFixed<16>>(const TVector4<TFixed<16>> &lhs, const TVector4<TFixed<16>> &rhs) {
+inline TFixed<16> Dot<TFixed<16>>(const TVector4<TFixed<16>> &lhs, const TVector4<TFixed<16>> &rhs) {
   auto xx = static_cast<int64_t>(lhs.x.data()) * rhs.x.data();
   auto yy = static_cast<int64_t>(lhs.y.data()) * rhs.y.data();
   auto zz = static_cast<int64_t>(lhs.z.data()) * rhs.z.data();
@@ -776,12 +777,12 @@ TFixed<16> Dot<TFixed<16>>(const TVector4<TFixed<16>> &lhs, const TVector4<TFixe
 }
 
 template <>
-float Dot<float>(const TVector3<float> &lhs, const TVector3<float> &rhs) {
+inline float Dot<float>(const TVector3<float> &lhs, const TVector3<float> &rhs) {
   return lhs.x * rhs.x + lhs.y * rhs.y + lhs.z * rhs.z;
 }
 
 template <>
-float Dot<float>(const TVector4<float> &lhs, const TVector4<float> &rhs) {
+inline float Dot<float>(const TVector4<float> &lhs, const TVector4<float> &rhs) {
   return lhs.x * rhs.x + lhs.y * rhs.y + lhs.z * rhs.z + lhs.w * rhs.w;
 }
 
