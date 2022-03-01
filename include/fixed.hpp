@@ -193,14 +193,12 @@ public:
   }
 
   friend TFixed operator+(TFixed lhs, TFixed rhs) {
-    assert((static_cast<int64_t>(lhs.data_) + rhs.data_) ==
-           (lhs.data_ + rhs.data_));
+    assert((static_cast<int64_t>(lhs.data_) + rhs.data_) == (lhs.data_ + rhs.data_));
     return TFixed::make(lhs.data_ + rhs.data_);
   }
 
   friend TFixed operator-(TFixed lhs, TFixed rhs) {
-    assert((static_cast<int64_t>(lhs.data_) - rhs.data_) ==
-           (lhs.data_ - rhs.data_));
+    assert((static_cast<int64_t>(lhs.data_) - rhs.data_) == (lhs.data_ - rhs.data_));
     return TFixed::make(lhs.data_ - rhs.data_);
   }
 

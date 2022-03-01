@@ -76,10 +76,6 @@ struct TVector1 {
   TVector1() {}
 
   TVector1(T x) : x(x) {}
-
-  TVector1(const TVector1 &rhs) {
-    this->x = rhs.x;
-  }
 };
 
 template <typename T>
@@ -100,11 +96,6 @@ struct TVector2 {
   TVector2() {}
 
   TVector2(T x, T y) : x(x), y(y) {}
-
-  TVector2(const TVector2 &rhs) {
-    this->x = rhs.x;
-    this->y = rhs.y;
-  }
 };
 
 template <typename T>
@@ -125,12 +116,6 @@ struct TVector3 {
   TVector3() {}
 
   TVector3(T x, T y, T z) : x(x), y(y), z(z) {}
-
-  TVector3(const TVector3 &rhs) {
-    this->x = rhs.x;
-    this->y = rhs.y;
-    this->z = rhs.z;
-  }
 };
 
 template <typename T>
@@ -151,13 +136,6 @@ struct TVector4 {
   TVector4() {}
 
   TVector4(T x, T y, T z, T w) : x(x), y(y), z(z), w(w) {}
-
-  TVector4(const TVector4 &rhs) {
-    this->x = rhs.x;
-    this->y = rhs.y;
-    this->z = rhs.z;
-    this->w = rhs.w;
-  }
 };
 
 template <typename T>
@@ -202,25 +180,6 @@ struct TMatrix44 {
     this->_42 = m42;
     this->_43 = m43;
     this->_44 = m44;
-  }
-
-  TMatrix44(const TMatrix44 &rhs) {
-    this->_11 = rhs._11;
-    this->_12 = rhs._12;
-    this->_13 = rhs._13;
-    this->_14 = rhs._14;
-    this->_21 = rhs._21;
-    this->_22 = rhs._22;
-    this->_23 = rhs._23;
-    this->_24 = rhs._24;
-    this->_31 = rhs._31;
-    this->_32 = rhs._32;
-    this->_33 = rhs._33;
-    this->_34 = rhs._34;
-    this->_41 = rhs._41;
-    this->_42 = rhs._42;
-    this->_43 = rhs._43;
-    this->_44 = rhs._44;
   }
 
   void toIdentity() {

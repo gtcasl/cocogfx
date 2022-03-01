@@ -57,7 +57,7 @@ struct ColorARGB {
     this->r = static_cast<uint8_t>(r);
   }
 
-  ColorARGB(int value) {
+  ColorARGB(uint32_t value) {
     this->value = value;
   }
 
