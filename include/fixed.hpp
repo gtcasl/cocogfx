@@ -222,19 +222,19 @@ public:
     return TFixed::make((static_cast<int64_t>(lhs.data_) << F2) / rhs.data());
   }
 
-  friend TFixed operator*(TFixed lhs, float rhs) {
+  friend float operator*(TFixed lhs, float rhs) {
     return static_cast<float>(lhs) * rhs;
   }
 
-  friend TFixed operator*(float lhs, TFixed rhs) {
+  friend float operator*(float lhs, TFixed rhs) {
     return lhs * static_cast<float>(rhs);
   }
 
-  friend TFixed operator/(TFixed lhs, float rhs) {
+  friend float operator/(TFixed lhs, float rhs) {
     return static_cast<float>(lhs) / rhs;
   }
 
-  friend TFixed operator/(float lhs, TFixed rhs) {
+  friend float operator/(float lhs, TFixed rhs) {
     return lhs / static_cast<float>(rhs);
   }
 
@@ -251,7 +251,7 @@ public:
   }
 
   friend TFixed operator/(char lhs, TFixed rhs) {
-    return rhs / lhs;
+    return static_cast<int32_t>(lhs) / rhs;
   }
 
   friend TFixed operator*(TFixed lhs, uint8_t rhs) {
@@ -267,7 +267,7 @@ public:
   }
 
   friend TFixed operator/(uint8_t lhs, TFixed rhs) {
-    return rhs / lhs;
+    return static_cast<int32_t>(lhs) / rhs;
   }
 
   friend TFixed operator*(TFixed lhs, short rhs) {
@@ -283,7 +283,7 @@ public:
   }
 
   friend TFixed operator/(short lhs, TFixed rhs) {
-    return rhs / lhs;
+    return static_cast<int32_t>(lhs) / rhs;
   }
 
   friend TFixed operator*(TFixed lhs, uint16_t rhs) {
@@ -299,7 +299,7 @@ public:
   }
 
   friend TFixed operator/(uint16_t lhs, TFixed rhs) {
-    return rhs / lhs;
+    return static_cast<int32_t>(lhs) / rhs;
   }
 
   friend TFixed operator*(TFixed lhs, int32_t rhs) {
@@ -319,7 +319,9 @@ public:
   }
 
   friend TFixed operator/(int32_t lhs, TFixed rhs) {
-    return rhs / lhs;
+    assert(rhs.data_);
+    auto value = static_cast<T>((static_cast<int64_t>(lhs) << (2 * TFixed::FRAC)) / rhs.data_);
+    return TFixed::make(value);
   }
 
   friend TFixed operator*(TFixed lhs, uint32_t rhs) {
@@ -339,7 +341,9 @@ public:
   }
 
   friend TFixed operator/(uint32_t lhs, TFixed rhs) {
-    return rhs / lhs;
+    assert(rhs.data_);
+    auto value = static_cast<T>((static_cast<int64_t>(lhs) << (2 * TFixed::FRAC)) / rhs.data_);
+    return TFixed::make(value);
   }
 
   friend TFixed operator<<(TFixed lhs, int32_t rhs) {
