@@ -21,34 +21,37 @@
 
 namespace cocogfx {
 
-template <typename T>
-struct Const {
-  static float Zero() { return static_cast<T>(0.0); }
+template <typename T> T Zero() { return static_cast<T>(0); }
 
-  static float Half() { return static_cast<T>(0.5); }
+template <typename T> T Half() { return static_cast<T>(0.5f); }
 
-  static float One() { return static_cast<T>(1); }
+template <typename T> T One() { return static_cast<T>(1); }
 
-  static float Two() { return static_cast<T>(2); }
+template <typename T> T Two() { return static_cast<T>(2); }
 
-  static float Min() { return static_cast<T>(-2147483647); }
+template <typename T> T Min() { return static_cast<T>(-2147483647); }
 
-  static float Max() { return static_cast<T>(2147483647); }
+template <typename T> T Max() { return static_cast<T>(2147483647); }
 
-  static float Epsilon() { return static_cast<T>(0.00000001); }
+template <typename T> T Epsilon() { return static_cast<T>(0.00000001f); }
 
-  static float PI() { return static_cast<T>(3.14159265); }
+template <typename T> T PI() { return static_cast<T>(3.14159265f); }
 
-  static float F128() { return static_cast<T>(128); }
+template <typename T> T F128() { return static_cast<T>(128); }
 
-  static float F90() { return static_cast<T>(90); }
+template <typename T> T F90() { return static_cast<T>(90); }
 
-  static float F180() { return static_cast<T>(180); }
+template <typename T> T F180() { return static_cast<T>(180); }
 
-  static float E() { return static_cast<T>(2.71828183); }
+template <typename T> T E() { return static_cast<T>(2.71828183f); }
 
-  static float LogE() { return static_cast<T>(1.442695041); }
-};
+template <typename T> T LogE() { return static_cast<T>(1.442695041f); }
+
+template <typename T> T F02() { return static_cast<T>(0.2f); }
+
+template <typename T> T F08() { return static_cast<T>(0.8f); }
+
+///////////////////////////////////////////////////////////////////////////////
 
 template <typename T>
 struct TRect {
@@ -60,9 +63,9 @@ struct TRect {
 
 template <typename T>
 struct TVector1 {
-  DISABLE_WARNING_PUSH
-  DISABLE_WARNING_ANONYMOUS_STRUCT
   enum { DIM = 1 };
+DISABLE_WARNING_PUSH
+DISABLE_WARNING_ANONYMOUS_STRUCT  
   union {
     struct {
       T x;
@@ -71,7 +74,7 @@ struct TVector1 {
       T m[DIM];
     };
   };
-  DISABLE_WARNING_POP
+DISABLE_WARNING_POP
 
   TVector1() {}
 
@@ -80,9 +83,9 @@ struct TVector1 {
 
 template <typename T>
 struct TVector2 {
-  DISABLE_WARNING_PUSH
-  DISABLE_WARNING_ANONYMOUS_STRUCT
   enum { DIM = 2 };
+DISABLE_WARNING_PUSH
+DISABLE_WARNING_ANONYMOUS_STRUCT  
   union {
     struct {
       T x, y;
@@ -91,7 +94,7 @@ struct TVector2 {
       T m[DIM];
     };
   };
-  DISABLE_WARNING_POP
+DISABLE_WARNING_POP
 
   TVector2() {}
 
@@ -100,9 +103,9 @@ struct TVector2 {
 
 template <typename T>
 struct TVector3 {
-  DISABLE_WARNING_PUSH
-  DISABLE_WARNING_ANONYMOUS_STRUCT
   enum { DIM = 3 };
+DISABLE_WARNING_PUSH
+DISABLE_WARNING_ANONYMOUS_STRUCT  
   union {
     struct {
       T x, y, z;
@@ -111,7 +114,7 @@ struct TVector3 {
       T m[DIM];
     };
   };
-  DISABLE_WARNING_POP
+DISABLE_WARNING_POP
 
   TVector3() {}
 
@@ -120,9 +123,9 @@ struct TVector3 {
 
 template <typename T>
 struct TVector4 {
-  DISABLE_WARNING_PUSH
-  DISABLE_WARNING_ANONYMOUS_STRUCT
   enum { DIM = 4 };
+DISABLE_WARNING_PUSH
+DISABLE_WARNING_ANONYMOUS_STRUCT  
   union {
     struct {
       T x, y, z, w;
@@ -131,7 +134,7 @@ struct TVector4 {
       T m[DIM];
     };
   };
-  DISABLE_WARNING_POP
+DISABLE_WARNING_POP
 
   TVector4() {}
 
@@ -140,8 +143,8 @@ struct TVector4 {
 
 template <typename T>
 struct TMatrix44 {
-  DISABLE_WARNING_PUSH
-  DISABLE_WARNING_ANONYMOUS_STRUCT
+DISABLE_WARNING_PUSH
+DISABLE_WARNING_ANONYMOUS_STRUCT
   union {
     struct {
       T _11, _12, _13, _14;
@@ -156,7 +159,7 @@ struct TMatrix44 {
       T _m[16];
     };
   };
-  DISABLE_WARNING_POP
+DISABLE_WARNING_POP
 
   TMatrix44() {}
 
@@ -183,33 +186,35 @@ struct TMatrix44 {
   }
 
   void toIdentity() {
-    this->_11 = Const<T>::One();
-    this->_12 = Const<T>::Zero();
-    this->_13 = Const<T>::Zero();
-    this->_14 = Const<T>::Zero();
-    this->_21 = Const<T>::Zero();
-    this->_22 = Const<T>::One();
-    this->_23 = Const<T>::Zero();
-    this->_24 = Const<T>::Zero();
-    this->_31 = Const<T>::Zero();
-    this->_32 = Const<T>::Zero();
-    this->_33 = Const<T>::One();
-    this->_34 = Const<T>::Zero();
-    this->_41 = Const<T>::Zero();
-    this->_42 = Const<T>::Zero();
-    this->_43 = Const<T>::Zero();
-    this->_44 = Const<T>::One();
+    this->_11 = One<T>();
+    this->_12 = Zero<T>();
+    this->_13 = Zero<T>();
+    this->_14 = Zero<T>();
+    this->_21 = Zero<T>();
+    this->_22 = One<T>();
+    this->_23 = Zero<T>();
+    this->_24 = Zero<T>();
+    this->_31 = Zero<T>();
+    this->_32 = Zero<T>();
+    this->_33 = One<T>();
+    this->_34 = Zero<T>();
+    this->_41 = Zero<T>();
+    this->_42 = Zero<T>();
+    this->_43 = Zero<T>();
+    this->_44 = One<T>();
   }
 };
 
+///////////////////////////////////////////////////////////////////////////////
+
 template <typename T>
 T DegToRad(T value) {
-  return value * (Const<T>::PI() / Const<T>::F180());
+  return value * (PI<T>() / F180<T>());
 }
 
 template <typename T>
 T RadToDeg(T value) {
-  return value * (Const<T>::F180() / Const<T>::PI());
+  return value * (F180<T>() / PI<T>());
 }
 
 int32_t fxSin(int32_t x);
@@ -449,12 +454,12 @@ inline int32_t Lerp8(int32_t lhs, int32_t rhs, int32_t frac) {
 
 template <typename T>
 T Sat(T rhs) {
-  return std::min<T>(std::max<T>(rhs, Const<T>::Zero(), Const<T>::One()));
+  return std::clamp<T>(rhs, Zero<T>(), One<T>());
 }
 
 template <typename T>
 bool IsAlmostZero(T rhs) {
-  return std::abs(rhs) <= Const<T>::Epsilon();
+  return std::abs(rhs) <= Epsilon<T>();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -841,7 +846,7 @@ void Mul(TVector2<T> *pOut, const TVector2<T> &vIn, const TMatrix44<T> &mat) {
 template <typename T>
 T Length(const TVector3<T> &vIn) {
   auto fDot = Dot<T>(vIn, vIn);
-  if (!IsAlmostZero(fDot - Const<T>::One())) {
+  if (!IsAlmostZero(fDot - One<T>())) {
     return std::sqrt(fDot);
   }
   return fDot;
@@ -851,7 +856,7 @@ template <typename T>
 void Normalize(TVector3<T> *pOut) {
   assert(pOut);
   auto fDot = Dot<T>(*pOut, *pOut);
-  if (!IsAlmostZero(fDot - Const<T>::One()) &&
+  if (!IsAlmostZero(fDot - One<T>()) &&
       !IsAlmostZero(fDot)) {
     auto fInvLen = RSqrt(fDot);
     pOut->x = pOut->x * fInvLen;
@@ -1000,7 +1005,7 @@ void Inverse33(TMatrix44<T> *pOut, const TMatrix44<T> &matIn) {
   auto fDet = MulAdd(matIn._11, pOut->_11, matIn._21, pOut->_21,
                      matIn._31, pOut->_31);
 
-  if (!IsAlmostZero(fDet - Const<T>::One())) {
+  if (!IsAlmostZero(fDet - One<T>())) {
     auto fDetInv = Inverse<T>(fDet);
 
     pOut->_11 *= fDetInv;
@@ -1058,7 +1063,7 @@ void Inverse(TMatrix44<T> *pOut, const TMatrix44<T> &matIn) {
   auto fDet = MulAdd(fA0, fB5, fA2, fB3, fA3, fB2, fA5, fB0) -
               MulAdd(fA1, fB4, fA4, fB1);
 
-  if (!IsAlmostZero(fDet - Const<T>::One())) {
+  if (!IsAlmostZero(fDet - One<T>())) {
     auto fDetInv = Inverse<T>(fDet);
 
     pOut->_11 *= fDetInv;
@@ -1091,35 +1096,35 @@ void Ortho(TMatrix44<T> *pOut, T left, T right, T bottom, T top, T zNear, T zFar
   auto fHeight = top - bottom;
   auto fDepth = zFar - zNear;
 
-  auto fInvWidth = (fWidth != Const<T>::Zero())
+  auto fInvWidth = (fWidth != Zero<T>())
                        ? Inverse<T>(fWidth)
-                       : Const<T>::Zero();
-  auto fInvHeight = (fHeight != Const<T>::Zero())
+                       : Zero<T>();
+  auto fInvHeight = (fHeight != Zero<T>())
                         ? Inverse<T>(fHeight)
-                        : Const<T>::Zero();
-  auto fInvDepth = (fDepth != Const<T>::Zero())
+                        : Zero<T>();
+  auto fInvDepth = (fDepth != Zero<T>())
                        ? Inverse<T>(fDepth)
-                       : Const<T>::Zero();
+                       : Zero<T>();
 
-  pOut->_11 = Const<T>::Two() * fInvWidth;
-  pOut->_12 = Const<T>::Zero();
-  pOut->_13 = Const<T>::Zero();
-  pOut->_14 = Const<T>::Zero();
+  pOut->_11 = Two<T>() * fInvWidth;
+  pOut->_12 = Zero<T>();
+  pOut->_13 = Zero<T>();
+  pOut->_14 = Zero<T>();
 
-  pOut->_21 = Const<T>::Zero();
-  pOut->_22 = Const<T>::Two() * fInvHeight;
-  pOut->_23 = Const<T>::Zero();
-  pOut->_24 = Const<T>::Zero();
+  pOut->_21 = Zero<T>();
+  pOut->_22 = Two<T>() * fInvHeight;
+  pOut->_23 = Zero<T>();
+  pOut->_24 = Zero<T>();
 
-  pOut->_31 = Const<T>::Zero();
-  pOut->_32 = Const<T>::Zero();
-  pOut->_33 = -Const<T>::Two() * fInvDepth;
-  pOut->_34 = Const<T>::Zero();
+  pOut->_31 = Zero<T>();
+  pOut->_32 = Zero<T>();
+  pOut->_33 = -Two<T>() * fInvDepth;
+  pOut->_34 = Zero<T>();
 
   pOut->_41 = -(right + left) * fInvWidth;
   pOut->_42 = -(top + bottom) * fInvHeight;
   pOut->_43 = -(zFar + zNear) * fInvDepth;
-  pOut->_44 = Const<T>::One();
+  pOut->_44 = One<T>();
 }
 
 template <typename T>
@@ -1130,37 +1135,37 @@ void Frustum(TMatrix44<T> *pOut, T left, T right, T bottom, T top, T zNear, T zF
   auto fHeight = top - bottom;
   auto fDepth = zFar - zNear;
 
-  auto fInvWidth = (fWidth != Const<T>::Zero())
+  auto fInvWidth = (fWidth != Zero<T>())
                        ? Inverse<T>(fWidth)
-                       : Const<T>::Zero();
-  auto fInvHeight = (fHeight != Const<T>::Zero())
+                       : Zero<T>();
+  auto fInvHeight = (fHeight != Zero<T>())
                         ? Inverse<T>(fHeight)
-                        : Const<T>::Zero();
-  auto fInvDepth = (fDepth != Const<T>::Zero())
+                        : Zero<T>();
+  auto fInvDepth = (fDepth != Zero<T>())
                        ? Inverse<T>(fDepth)
-                       : Const<T>::Zero();
+                       : Zero<T>();
 
-  auto fTwoNear = Const<T>::Two() * zNear;
+  auto fTwoNear = Two<T>() * zNear;
 
   pOut->_11 = fTwoNear * fInvWidth;
-  pOut->_12 = Const<T>::Zero();
-  pOut->_13 = Const<T>::Zero();
-  pOut->_14 = Const<T>::Zero();
+  pOut->_12 = Zero<T>();
+  pOut->_13 = Zero<T>();
+  pOut->_14 = Zero<T>();
 
-  pOut->_21 = Const<T>::Zero();
+  pOut->_21 = Zero<T>();
   pOut->_22 = fTwoNear * fInvHeight;
-  pOut->_23 = Const<T>::Zero();
-  pOut->_24 = Const<T>::Zero();
+  pOut->_23 = Zero<T>();
+  pOut->_24 = Zero<T>();
 
   pOut->_31 = (right + left) * fInvWidth;
   pOut->_32 = (top + bottom) * fInvHeight;
   pOut->_33 = -(zFar + zNear) * fInvDepth;
-  pOut->_34 = -Const<T>::One();
+  pOut->_34 = -One<T>();
 
-  pOut->_41 = Const<T>::Zero();
-  pOut->_42 = Const<T>::Zero();
+  pOut->_41 = Zero<T>();
+  pOut->_42 = Zero<T>();
   pOut->_43 = -zFar * (fTwoNear * fInvDepth);
-  pOut->_44 = Const<T>::Zero();
+  pOut->_44 = Zero<T>();
 }
 
 template <typename T>
@@ -1172,7 +1177,7 @@ void Rotate(TMatrix44<T> *pOut, T angle, T x, T y, T z) {
 
   auto fSin = std::sin(angle);
   auto fCos = std::cos(angle);
-  auto fICos = Const<T>::One() - fCos;
+  auto fICos = One<T>() - fCos;
 
   auto _fA = fICos * vAxis.x * vAxis.y;
   auto _fB = fICos * vAxis.x * vAxis.z;
@@ -1181,22 +1186,22 @@ void Rotate(TMatrix44<T> *pOut, T angle, T x, T y, T z) {
   pOut->_11 = fICos * vAxis.x * vAxis.x + fCos;
   pOut->_12 = _fA + vAxis.z * fSin;
   pOut->_13 = _fB - vAxis.y * fSin;
-  pOut->_14 = Const<T>::Zero();
+  pOut->_14 = Zero<T>();
 
   pOut->_21 = _fA - vAxis.z * fSin;
   pOut->_22 = fICos * vAxis.y * vAxis.y + fCos;
   pOut->_23 = _fC + vAxis.x * fSin;
-  pOut->_24 = Const<T>::Zero();
+  pOut->_24 = Zero<T>();
 
   pOut->_31 = _fB + vAxis.y * fSin;
   pOut->_32 = _fC - vAxis.x * fSin;
   pOut->_33 = fICos * vAxis.z * vAxis.z + fCos;
-  pOut->_34 = Const<T>::Zero();
+  pOut->_34 = Zero<T>();
 
-  pOut->_41 = Const<T>::Zero();
-  pOut->_42 = Const<T>::Zero();
-  pOut->_43 = Const<T>::Zero();
-  pOut->_44 = Const<T>::One();
+  pOut->_41 = Zero<T>();
+  pOut->_42 = Zero<T>();
+  pOut->_43 = Zero<T>();
+  pOut->_44 = One<T>();
 }
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -21,6 +21,8 @@
 namespace cocogfx {
 
 struct ColorARGB {
+DISABLE_WARNING_PUSH
+DISABLE_WARNING_ANONYMOUS_STRUCT
   union {
     struct {
       uint32_t value;
@@ -32,6 +34,7 @@ struct ColorARGB {
       uint8_t m[4];
     };
   };
+DISABLE_WARNING_POP
 
   ColorARGB() {}
 

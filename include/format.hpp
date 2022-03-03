@@ -462,6 +462,8 @@ public:
   };
 };
 
+namespace Format {
+
 inline static const FormatInfo &GetInfo(ePixelFormat pixelFormat) {
   static const FormatInfo sc_formatInfos[FORMAT_SIZE_] = {
       __formatInfo(FORMAT_UNKNOWN),
@@ -1021,5 +1023,7 @@ inline ColorARGB ConvertFrom<FORMAT_X8S8D16, false>(uint32_t in) {
   ret.value = in;
   return ret;
 }
+
+} // namespace Format
 
 }
