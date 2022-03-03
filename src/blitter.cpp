@@ -33,8 +33,8 @@ int cocogfx::CopyBuffers(std::vector<uint8_t>& dst_pixels,
                          uint32_t src_offsety,                                     
                          uint32_t width, 
                          uint32_t height) {  
-  auto& src_fmtinfo = GetInfo(src_format);
-  auto& dst_fmtinfo = GetInfo(dst_format);
+  auto& src_fmtinfo = Format::GetInfo(src_format);
+  auto& dst_fmtinfo = Format::GetInfo(dst_format);
   
   if ((src_fmtinfo.Depth || src_fmtinfo.Stencil) ^ (dst_fmtinfo.Depth || dst_fmtinfo.Stencil)) {
     std::cerr << "non-compatible formats" << std::endl;
@@ -69,8 +69,8 @@ int cocogfx::CopyBuffers(std::vector<uint8_t>& dst_pixels,
   auto pbSrc = src_pixels.data() + src_offsetx * src_stride + src_offsety * src_pitch;
   auto pbDst = dst_pixels.data() + dst_offsetx * dst_stride + dst_offsety * dst_pitch;
 
-  auto src_nformat = GetNativeFormat((ePixelFormat)src_format);
-  auto dst_nformat = GetNativeFormat((ePixelFormat)dst_format);
+  auto src_nformat = Format::GetNativeFormat((ePixelFormat)src_format);
+  auto dst_nformat = Format::GetNativeFormat((ePixelFormat)dst_format);
 
   if (src_nformat == dst_nformat) {
     while (height--) {
@@ -79,8 +79,8 @@ int cocogfx::CopyBuffers(std::vector<uint8_t>& dst_pixels,
       pbSrc += src_pitch;
     }
   } else {
-    auto convert_from = GetConvertFrom(src_nformat, true);
-    auto convert_to = GetConvertTo(dst_nformat);
+    auto convert_from = Format::GetConvertFrom(src_nformat, true);
+    auto convert_to = Format::GetConvertTo(dst_nformat);
     while (height--) {
       uint8_t *pbD = pbDst; 
       for (auto *pbS = pbSrc, 
@@ -105,7 +105,7 @@ int cocogfx::ConvertImage(std::vector<uint8_t>& dst_pixels,
                           uint32_t src_width,
                           uint32_t src_height,                 
                           uint32_t src_pitch) {
-  uint32_t dst_pitch = GetInfo(dst_format).BytePerPixel * src_width;
+  uint32_t dst_pitch = Format::GetInfo(dst_format).BytePerPixel * src_width;
 
   dst_pixels.resize(dst_pitch * src_height);
 
@@ -136,12 +136,12 @@ int cocogfx::GenerateMipmaps(std::vector<uint8_t>& dst_pixels,
                              uint32_t src_width,
                              uint32_t src_height,
                              uint32_t src_pitch) {
-  uint32_t bpp = GetInfo(format).BytePerPixel;
+  uint32_t bpp = Format::GetInfo(format).BytePerPixel;
   uint32_t src_logwidth  = log2ceil(src_width);
   uint32_t src_logheight = log2ceil(src_height);
   uint32_t num_mipmaps   = std::max(src_logwidth, src_logheight) + 1;
-  auto convert_from      = GetConvertFrom(format, true);
-  auto convert_to        = GetConvertTo(format);
+  auto convert_from      = Format::GetConvertFrom(format, true);
+  auto convert_to        = Format::GetConvertTo(format);
 
   mip_offsets.resize(num_mipmaps);
 
