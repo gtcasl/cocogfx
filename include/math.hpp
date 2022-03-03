@@ -55,10 +55,21 @@ template <typename T> T F08() { return static_cast<T>(0.8f); }
 
 template <typename T>
 struct TRect {
-  T left;
-  T top;
-  T right;
-  T bottom;
+  enum { DIM = 4 };
+DISABLE_WARNING_PUSH
+DISABLE_WARNING_ANONYMOUS_STRUCT  
+  union {
+    struct {
+      T left;
+      T top;
+      T right;
+      T bottom;
+    };
+    struct {
+      T m[DIM];
+    };
+  };
+DISABLE_WARNING_POP  
 };
 
 template <typename T>
