@@ -381,11 +381,12 @@ inline float RSqrt(float rhs) {
 
 ///////////////////////////////////////////////////////////////////////////////
 
-inline float Dot(float a0, float b0, 
-                 float a1, float b1, 
-                 float a2, float b2, 
-                 float a3, float b3) {
-  return a0 * b0 + a1 * b1 + a2 * b2 + a3 * b3;
+template <typename R>
+R Dot(float a0, float b0, 
+      float a1, float b1, 
+      float a2, float b2, 
+      float a3, float b3) {
+  return static_cast<R>(a0 * b0 + a1 * b1 + a2 * b2 + a3 * b3);
 }
 
 template <typename R, uint32_t F1, uint32_t F2, typename T1, typename T2>
@@ -401,8 +402,11 @@ R Dot(TFixed<F1,T1> a0, TFixed<F2,T2> b0,
   return R::make(value >> FRAC);
 }
 
-inline float Dot(float a0, float b0, float a1, float b1, float a2, float b2) {
-  return a0 * b0 + a1 * b1 + a2 * b2;
+template <typename R>
+R Dot(float a0, float b0, 
+      float a1, float b1, 
+      float a2, float b2) {
+  return static_cast<R>(a0 * b0 + a1 * b1 + a2 * b2);
 }
 
 template <typename R, uint32_t F1, uint32_t F2, typename T1, typename T2>
@@ -416,8 +420,9 @@ R Dot(TFixed<F1,T1> a0, TFixed<F2,T2> b0,
   return R::make(value >> FRAC);
 }
 
-inline float Dot(float a0, float b0, float a1, float b1) {
-  return a0 * b0 + a1 * b1;
+template <typename R>
+R Dot(float a0, float b0, float a1, float b1) {
+  return static_cast<R>(a0 * b0 + a1 * b1);
 }
 
 template <typename R, uint32_t F1, uint32_t F2, typename T1, typename T2>
@@ -428,8 +433,9 @@ R Dot(TFixed<F1,T1> a0, TFixed<F2,T2> b0, TFixed<F1,T1> a1, TFixed<F2,T2> b1) {
   return R::make(value >> FRAC);
 }
 
-inline float Cross(float a0, float b0, float a1, float b1) {
-  return a0 * b0 - a1 * b1;
+template <typename R>
+R Cross(float a0, float b0, float a1, float b1) {
+  return static_cast<R>(a0 * b0 - a1 * b1);
 }
 
 template <typename R, uint32_t F1, uint32_t F2, typename T1, typename T2>
@@ -547,11 +553,6 @@ R MulRnd(float a, float b) {
 template <typename R>
 R MulRnd(float a, float b, float c) {
   return static_cast<R>(a * b * c);
-}
-
-template <typename R>
-R Cross(float a, float b, float c, float d) {
-  return static_cast<R>(a * b - c * d);
 }
 
 template <typename R>
