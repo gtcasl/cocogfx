@@ -381,59 +381,63 @@ inline float RSqrt(float rhs) {
 
 ///////////////////////////////////////////////////////////////////////////////
 
-inline float MulAdd(float a0, float b0, 
-                    float a1, float b1, 
-                    float a2, float b2, 
-                    float a3, float b3) {
+inline float Dot(float a0, float b0, 
+                 float a1, float b1, 
+                 float a2, float b2, 
+                 float a3, float b3) {
   return a0 * b0 + a1 * b1 + a2 * b2 + a3 * b3;
 }
 
-template <uint32_t F, typename T>
-TFixed<F,T> MulAdd(TFixed<F,T> a0, TFixed<F,T> b0, 
-                   TFixed<F,T> a1, TFixed<F,T> b1, 
-                   TFixed<F,T> a2, TFixed<F,T> b2,
-                   TFixed<F,T> a3, TFixed<F,T> b3) {
-  return TFixed<F,T>::make((static_cast<int64_t>(a0.data()) * b0.data() +
-                            static_cast<int64_t>(a1.data()) * b1.data() +
-                            static_cast<int64_t>(a2.data()) * b2.data() +
-                            static_cast<int64_t>(a3.data()) * b3.data()) >>
-                           TFixed<F,T>::FRAC);
+template <typename R, uint32_t F1, uint32_t F2, typename T1, typename T2>
+R Dot(TFixed<F1,T1> a0, TFixed<F2,T2> b0, 
+      TFixed<F1,T1> a1, TFixed<F2,T2> b1, 
+      TFixed<F1,T1> a2, TFixed<F2,T2> b2,
+      TFixed<F1,T1> a3, TFixed<F2,T2> b3) {
+  int FRAC = TFixed<F1,T1>::FRAC + TFixed<F2,T2>::FRAC - R::FRAC;
+  auto value = static_cast<int64_t>(a0.data()) * b0.data();
+      value += static_cast<int64_t>(a1.data()) * b1.data();
+      value += static_cast<int64_t>(a2.data()) * b2.data();
+      value += static_cast<int64_t>(a3.data()) * b3.data();
+  return R::make(value >> FRAC);
 }
 
-inline float MulAdd(float a0, float b0, float a1, float b1, float a2, float b2) {
+inline float Dot(float a0, float b0, float a1, float b1, float a2, float b2) {
   return a0 * b0 + a1 * b1 + a2 * b2;
 }
 
-template <uint32_t F, typename T>
-TFixed<F,T> MulAdd(TFixed<F,T> a0, TFixed<F,T> b0, 
-                   TFixed<F,T> a1, TFixed<F,T> b1, 
-                   TFixed<F,T> a2, TFixed<F,T> b2) {
-  return TFixed<F,T>::make((static_cast<int64_t>(a0.data()) * b0.data() +
-                            static_cast<int64_t>(a1.data()) * b1.data() +
-                            static_cast<int64_t>(a2.data()) * b2.data()) >>
-                           TFixed<F,T>::FRAC);
+template <typename R, uint32_t F1, uint32_t F2, typename T1, typename T2>
+R Dot(TFixed<F1,T1> a0, TFixed<F2,T2> b0, 
+      TFixed<F1,T1> a1, TFixed<F2,T2> b1, 
+      TFixed<F1,T1> a2, TFixed<F2,T2> b2) {
+  int FRAC = TFixed<F1,T1>::FRAC + TFixed<F2,T2>::FRAC - R::FRAC;
+  auto value = static_cast<int64_t>(a0.data()) * b0.data();
+      value += static_cast<int64_t>(a1.data()) * b1.data();
+      value += static_cast<int64_t>(a2.data()) * b2.data();
+  return R::make(value >> FRAC);
 }
 
-inline float MulAdd(float a0, float b0, float a1, float b1) {
+inline float Dot(float a0, float b0, float a1, float b1) {
   return a0 * b0 + a1 * b1;
 }
 
-template <uint32_t F, typename T>
-TFixed<F,T> MulAdd(TFixed<F,T> a0, TFixed<F,T> b0, TFixed<F,T> a1, TFixed<F,T> b1) {
-  return TFixed<F,T>::make((static_cast<int64_t>(a0.data()) * b0.data() +
-                            static_cast<int64_t>(a1.data()) * b1.data()) >>
-                           TFixed<F,T>::FRAC);
+template <typename R, uint32_t F1, uint32_t F2, typename T1, typename T2>
+R Dot(TFixed<F1,T1> a0, TFixed<F2,T2> b0, TFixed<F1,T1> a1, TFixed<F2,T2> b1) {
+  int FRAC = TFixed<F1,T1>::FRAC + TFixed<F2,T2>::FRAC - R::FRAC;
+  auto value = static_cast<int64_t>(a0.data()) * b0.data();
+      value += static_cast<int64_t>(a1.data()) * b1.data();
+  return R::make(value >> FRAC);
 }
 
-inline float MulSub(float a0, float b0, float a1, float b1) {
+inline float Cross(float a0, float b0, float a1, float b1) {
   return a0 * b0 - a1 * b1;
 }
 
-template <uint32_t F, typename T>
-TFixed<F,T> MulSub(TFixed<F,T> a0, TFixed<F,T> b0, TFixed<F,T> a1, TFixed<F,T> b1) {
-  return TFixed<F,T>::make((static_cast<int64_t>(a0.data()) * b0.data() -
-                            static_cast<int64_t>(a1.data()) * b1.data()) >>
-                           TFixed<F,T>::FRAC);
+template <typename R, uint32_t F1, uint32_t F2, typename T1, typename T2>
+R Cross(TFixed<F1,T1> a0, TFixed<F2,T2> b0, TFixed<F1,T1> a1, TFixed<F2,T2> b1) {
+  int FRAC = TFixed<F1,T1>::FRAC + TFixed<F2,T2>::FRAC - R::FRAC;
+  auto value = static_cast<int64_t>(a0.data()) * b0.data();
+      value -= static_cast<int64_t>(a1.data()) * b1.data();
+  return R::make(value >> FRAC);
 }
 
 template <>
