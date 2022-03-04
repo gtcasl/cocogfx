@@ -550,7 +550,7 @@ R MulRnd(float a, float b, float c) {
 }
 
 template <typename R>
-R MulSub(float a, float b, float c, float d) {
+R Cross(float a, float b, float c, float d) {
   return static_cast<R>(a * b - c * d);
 }
 
@@ -610,16 +610,16 @@ R Inverse(float rhs) {
 }
 
 template <typename R, uint32_t F1, uint32_t F2, typename T1, typename T2>
-R FastMul(TFixed<F1, T1> lhs, TFixed<F2, T2> rhs) {
+R FastMul(TFixed<F1,T1> lhs, TFixed<F2,T2> rhs) {
   assert((static_cast<int64_t>(lhs.data()) * rhs.data()) ==
          (lhs.data() * rhs.data()));
-  int32_t FRAC = TFixed<F1, T1>::FRAC + TFixed<F2, T2>::FRAC - R::FRAC;
+  int32_t FRAC = TFixed<F1,T1>::FRAC + TFixed<F2,T2>::FRAC - R::FRAC;
   return R::make((lhs.data() * rhs.data()) >> FRAC);
 }
 
 template <typename R, uint32_t F1, uint32_t F2, typename T1, typename T2>
-R FastDiv(TFixed<F1, T1> lhs, TFixed<F2, T2> rhs) {
-  int32_t FRAC = TFixed<F1, T1>::FRAC + TFixed<F2, T2>::FRAC - R::FRAC;
+R FastDiv(TFixed<F1,T1> lhs, TFixed<F2,T2> rhs) {
+  int32_t FRAC = TFixed<F1,T1>::FRAC + TFixed<F2,T2>::FRAC - R::FRAC;
   assert((static_cast<int64_t>(lhs.data()) << FRAC) == (lhs.data() << FRAC));
   return R::make((lhs.data() << FRAC) / rhs.data());
 }
@@ -633,16 +633,16 @@ R MulRnd(TFixed<F,T> lhs, int32_t rhs) {
 }
 
 template <typename R, uint32_t F1, uint32_t F2, typename T1, typename T2>
-R MulRnd(TFixed<F1, T1> lhs, TFixed<F2, T2> rhs) {
-  int32_t FRAC = TFixed<F1, T1>::FRAC + TFixed<F2, T2>::FRAC - R::FRAC;
+R MulRnd(TFixed<F1,T1> lhs, TFixed<F2,T2> rhs) {
+  int32_t FRAC = TFixed<F1,T1>::FRAC + TFixed<F2,T2>::FRAC - R::FRAC;
   int32_t HALF = 1 << (FRAC - 1);
   auto value = static_cast<int64_t>(lhs.data()) * rhs.data();
   return R::make((value + HALF) >> FRAC);
 }
 
 template <typename R, uint32_t F1, uint32_t F2, typename T1, typename T2>
-R MulRnd(TFixed<F1, T1> a, TFixed<F2, T2> b, int32_t c) {
-  int32_t FRAC = TFixed<F1, T1>::FRAC + TFixed<F2, T2>::FRAC - R::FRAC;
+R MulRnd(TFixed<F1,T1> a, TFixed<F2,T2> b, int32_t c) {
+  int32_t FRAC = TFixed<F1,T1>::FRAC + TFixed<F2,T2>::FRAC - R::FRAC;
   auto HALF = static_cast<int64_t>(1) << (FRAC - 1);
   auto value = static_cast<int64_t>(a.data()) * b.data() * c;
   return R::make((value + HALF) >> FRAC);
@@ -650,27 +650,11 @@ R MulRnd(TFixed<F1, T1> a, TFixed<F2, T2> b, int32_t c) {
 
 template <typename R, uint32_t F1, uint32_t F2, uint32_t F3, typename T1,
           typename T2, typename T3>
-R MulRnd(TFixed<F1, T1> a, TFixed<F2, T2> b, TFixed<F3, T3> c) {
-  int32_t FRAC = TFixed<F1, T1>::FRAC + TFixed<F2, T2>::FRAC + TFixed<F3, T3>::FRAC - R::FRAC;
+R MulRnd(TFixed<F1,T1> a, TFixed<F2,T2> b, TFixed<F3, T3> c) {
+  int32_t FRAC = TFixed<F1,T1>::FRAC + TFixed<F2,T2>::FRAC + TFixed<F3, T3>::FRAC - R::FRAC;
   auto HALF = static_cast<int64_t>(1) << (FRAC - 1);
   int64_t value = static_cast<int64_t>(a.data()) * b.data() * c.data();
   return R::make((value + HALF) >> FRAC);
-}
-
-template <typename R, uint32_t F1, uint32_t F2, typename T1, typename T2>
-R MulAdd(TFixed<F1, T1> a, TFixed<F2, T2> b, TFixed<F1, T1> c, TFixed<F2, T2> d) {
-  int32_t FRAC = TFixed<F1, T1>::FRAC + TFixed<F2, T2>::FRAC - R::FRAC;
-  auto ab = static_cast<int64_t>(a.data()) * b.data();
-  auto cd = static_cast<int64_t>(c.data()) * d.data();
-  return R::make((ab + cd) >> FRAC);
-}
-
-template <typename R, uint32_t F1, uint32_t F2, typename T1, typename T2>
-R MulSub(TFixed<F1, T1> a, TFixed<F2, T2> b, TFixed<F1, T1> c, TFixed<F2, T2> d) {
-  int32_t FRAC = TFixed<F1, T1>::FRAC + TFixed<F2, T2>::FRAC - R::FRAC;
-  auto ab = static_cast<int64_t>(a.data()) * b.data();
-  auto cd = static_cast<int64_t>(c.data()) * d.data();
-  return R::make((ab - cd) >> FRAC);
 }
 
 template <typename R, uint32_t F, typename T>
@@ -681,8 +665,8 @@ R Mul(TFixed<F,T> lhs, TFixed<F,T> rhs) {
 }
 
 template <typename R, uint32_t F1, uint32_t F2, typename T1, typename T2>
-R Mul(TFixed<F1, T1> lhs, TFixed<F2, T2> rhs) {
-  int32_t FRAC = TFixed<F1, T1>::FRAC + TFixed<F2, T2>::FRAC - R::FRAC;
+R Mul(TFixed<F1,T1> lhs, TFixed<F2,T2> rhs) {
+  int32_t FRAC = TFixed<F1,T1>::FRAC + TFixed<F2,T2>::FRAC - R::FRAC;
   auto value = static_cast<int64_t>(lhs.data()) * rhs.data();
   return R::make(value >> FRAC);
 }
@@ -700,16 +684,16 @@ R Mul(TFixed<F,T> lhs, float rhs) {
 }
 
 template <typename R, uint32_t F1, uint32_t F2, typename T1, typename T2>
-R MulShift(TFixed<F1, T1> lhs, TFixed<F2, T2> rhs, R a, int32_t shift) {
-  int32_t FRAC = TFixed<F1, T1>::FRAC + TFixed<F2, T2>::FRAC - R::FRAC;
+R MulShift(TFixed<F1,T1> lhs, TFixed<F2,T2> rhs, R a, int32_t shift) {
+  int32_t FRAC = TFixed<F1,T1>::FRAC + TFixed<F2,T2>::FRAC - R::FRAC;
   auto value = static_cast<int64_t>(lhs.data()) * rhs.data();
   return R::make((value >> FRAC) - (a.data() >> shift));
 }
 
 template <uint32_t F1, uint32_t F2, typename T1, typename T2>
-TFixed<F1, T1> Lerpf(TFixed<F1, T1> lhs, TFixed<F1, T1> rhs, TFixed<F2, T2> scalar) {
-  assert((scalar >= Zero<TFixed<F2, T2>>()) &&
-         (scalar <= One<TFixed<F2, T2>>()));
+TFixed<F1,T1> Lerpf(TFixed<F1,T1> lhs, TFixed<F1,T1> rhs, TFixed<F2,T2> scalar) {
+  assert((scalar >= Zero<TFixed<F2,T2>>()) &&
+         (scalar <= One<TFixed<F2,T2>>()));
   return lhs + (rhs - lhs) * scalar;
 }
 
@@ -773,10 +757,10 @@ void Mul(TVector4<T> *pOut, const TVector3<T> &vIn, const TMatrix44<T> &mat) {
   auto y = vIn.y;
   auto z = vIn.z;
 
-  pOut->x = MulAdd(x, mat._11, y, mat._21, z, mat._31) + mat._41;
-  pOut->y = MulAdd(x, mat._12, y, mat._22, z, mat._32) + mat._42;
-  pOut->z = MulAdd(x, mat._13, y, mat._23, z, mat._33) + mat._43;
-  pOut->w = MulAdd(x, mat._14, y, mat._24, z, mat._34) + mat._44;
+  pOut->x = Dot<T>(x, mat._11, y, mat._21, z, mat._31) + mat._41;
+  pOut->y = Dot<T>(x, mat._12, y, mat._22, z, mat._32) + mat._42;
+  pOut->z = Dot<T>(x, mat._13, y, mat._23, z, mat._33) + mat._43;
+  pOut->w = Dot<T>(x, mat._14, y, mat._24, z, mat._34) + mat._44;
 }
 
 template <typename T>
@@ -787,9 +771,9 @@ void Mul4x3(TVector3<T> *pOut, const TVector3<T> &vIn, const TMatrix44<T> &mat) 
   auto y = vIn.y;
   auto z = vIn.z;
 
-  pOut->x = MulAdd(x, mat._11, y, mat._21, z, mat._31) + mat._41;
-  pOut->y = MulAdd(x, mat._12, y, mat._22, z, mat._32) + mat._42;
-  pOut->z = MulAdd(x, mat._13, y, mat._23, z, mat._33) + mat._43;
+  pOut->x = Dot<T>(x, mat._11, y, mat._21, z, mat._31) + mat._41;
+  pOut->y = Dot<T>(x, mat._12, y, mat._22, z, mat._32) + mat._42;
+  pOut->z = Dot<T>(x, mat._13, y, mat._23, z, mat._33) + mat._43;
 }
 
 template <typename T>
@@ -800,9 +784,9 @@ void Mul(TVector3<T> *pOut, const TVector3<T> &vIn, const TMatrix44<T> &mat) {
   auto y = vIn.y;
   auto z = vIn.z;
 
-  pOut->x = MulAdd(x, mat._11, y, mat._21, z, mat._31);
-  pOut->y = MulAdd(x, mat._12, y, mat._22, z, mat._32);
-  pOut->z = MulAdd(x, mat._13, y, mat._23, z, mat._33);
+  pOut->x = Dot<T>(x, mat._11, y, mat._21, z, mat._31);
+  pOut->y = Dot<T>(x, mat._12, y, mat._22, z, mat._32);
+  pOut->z = Dot<T>(x, mat._13, y, mat._23, z, mat._33);
 }
 
 template <typename T>
@@ -814,10 +798,10 @@ void Mul(TVector4<T> *pOut, const TVector4<T> &vIn, const TMatrix44<T> &mat) {
   auto z = vIn.z;
   auto w = vIn.w;
 
-  pOut->x = MulAdd(x, mat._11, y, mat._21, z, mat._31, w, mat._41);
-  pOut->y = MulAdd(x, mat._12, y, mat._22, z, mat._32, w, mat._42);
-  pOut->z = MulAdd(x, mat._13, y, mat._23, z, mat._33, w, mat._43);
-  pOut->w = MulAdd(x, mat._14, y, mat._24, z, mat._34, w, mat._44);
+  pOut->x = Dot<T>(x, mat._11, y, mat._21, z, mat._31, w, mat._41);
+  pOut->y = Dot<T>(x, mat._12, y, mat._22, z, mat._32, w, mat._42);
+  pOut->z = Dot<T>(x, mat._13, y, mat._23, z, mat._33, w, mat._43);
+  pOut->w = Dot<T>(x, mat._14, y, mat._24, z, mat._34, w, mat._44);
 }
 
 template <typename T>
@@ -829,9 +813,9 @@ void Mul(TVector3<T> *pOut, const TVector4<T> &vIn, const TMatrix44<T> &mat) {
   auto z = vIn.z;
   auto w = vIn.w;
 
-  pOut->x = MulAdd(x, mat._11, y, mat._21, z, mat._31, w, mat._41);
-  pOut->y = MulAdd(x, mat._12, y, mat._22, z, mat._32, w, mat._42);
-  pOut->z = MulAdd(x, mat._13, y, mat._23, z, mat._33, w, mat._43);
+  pOut->x = Dot<T>(x, mat._11, y, mat._21, z, mat._31, w, mat._41);
+  pOut->y = Dot<T>(x, mat._12, y, mat._22, z, mat._32, w, mat._42);
+  pOut->z = Dot<T>(x, mat._13, y, mat._23, z, mat._33, w, mat._43);
 }
 
 template <typename T>
@@ -843,8 +827,8 @@ void Mul(TVector2<T> *pOut, const TVector4<T> &vIn, const TMatrix44<T> &mat) {
   auto z = vIn.z;
   auto w = vIn.w;
 
-  pOut->x = MulAdd(x, mat._11, y, mat._21, z, mat._31, w, mat._41);
-  pOut->y = MulAdd(x, mat._12, y, mat._22, z, mat._32, w, mat._42);
+  pOut->x = Dot<T>(x, mat._11, y, mat._21, z, mat._31, w, mat._41);
+  pOut->y = Dot<T>(x, mat._12, y, mat._22, z, mat._32, w, mat._42);
 }
 
 template <typename T>
@@ -854,8 +838,8 @@ void Mul(TVector2<T> *pOut, const TVector2<T> &vIn, const TMatrix44<T> &mat) {
   auto x = vIn.x;
   auto y = vIn.y;
 
-  pOut->x = MulAdd(x, mat._11, y, mat._21) + mat._41;
-  pOut->y = MulAdd(x, mat._12, y, mat._22) + mat._42;
+  pOut->x = Dot<T>(x, mat._11, y, mat._21) + mat._41;
+  pOut->y = Dot<T>(x, mat._12, y, mat._22) + mat._42;
 }
 
 template <typename T>
@@ -964,40 +948,40 @@ template <typename T>
 void Mul(TMatrix44<T> *pOut, const TMatrix44<T> &mat1, const TMatrix44<T> &mat2) {
   assert(pOut);
 
-  pOut->_11 = MulAdd(mat1._11, mat2._11, mat1._21, mat2._12, mat1._31,
+  pOut->_11 = Dot<T>(mat1._11, mat2._11, mat1._21, mat2._12, mat1._31,
                         mat2._13, mat1._41, mat2._14);
-  pOut->_12 = MulAdd(mat1._12, mat2._11, mat1._22, mat2._12, mat1._32,
+  pOut->_12 = Dot<T>(mat1._12, mat2._11, mat1._22, mat2._12, mat1._32,
                         mat2._13, mat1._42, mat2._14);
-  pOut->_13 = MulAdd(mat1._13, mat2._11, mat1._23, mat2._12, mat1._33,
+  pOut->_13 = Dot<T>(mat1._13, mat2._11, mat1._23, mat2._12, mat1._33,
                         mat2._13, mat1._43, mat2._14);
-  pOut->_14 = MulAdd(mat1._14, mat2._11, mat1._24, mat2._12, mat1._34,
+  pOut->_14 = Dot<T>(mat1._14, mat2._11, mat1._24, mat2._12, mat1._34,
                         mat2._13, mat1._44, mat2._14);
 
-  pOut->_21 = MulAdd(mat1._11, mat2._21, mat1._21, mat2._22, mat1._31,
+  pOut->_21 = Dot<T>(mat1._11, mat2._21, mat1._21, mat2._22, mat1._31,
                         mat2._23, mat1._41, mat2._24);
-  pOut->_22 = MulAdd(mat1._12, mat2._21, mat1._22, mat2._22, mat1._32,
+  pOut->_22 = Dot<T>(mat1._12, mat2._21, mat1._22, mat2._22, mat1._32,
                         mat2._23, mat1._42, mat2._24);
-  pOut->_23 = MulAdd(mat1._13, mat2._21, mat1._23, mat2._22, mat1._33,
+  pOut->_23 = Dot<T>(mat1._13, mat2._21, mat1._23, mat2._22, mat1._33,
                         mat2._23, mat1._43, mat2._24);
-  pOut->_24 = MulAdd(mat1._14, mat2._21, mat1._24, mat2._22, mat1._34,
+  pOut->_24 = Dot<T>(mat1._14, mat2._21, mat1._24, mat2._22, mat1._34,
                         mat2._23, mat1._44, mat2._24);
 
-  pOut->_31 = MulAdd(mat1._11, mat2._31, mat1._21, mat2._32, mat1._31,
+  pOut->_31 = Dot<T>(mat1._11, mat2._31, mat1._21, mat2._32, mat1._31,
                         mat2._33, mat1._41, mat2._34);
-  pOut->_32 = MulAdd(mat1._12, mat2._31, mat1._22, mat2._32, mat1._32,
+  pOut->_32 = Dot<T>(mat1._12, mat2._31, mat1._22, mat2._32, mat1._32,
                         mat2._33, mat1._42, mat2._34);
-  pOut->_33 = MulAdd(mat1._13, mat2._31, mat1._23, mat2._32, mat1._33,
+  pOut->_33 = Dot<T>(mat1._13, mat2._31, mat1._23, mat2._32, mat1._33,
                         mat2._33, mat1._43, mat2._34);
-  pOut->_34 = MulAdd(mat1._14, mat2._31, mat1._24, mat2._32, mat1._34,
+  pOut->_34 = Dot<T>(mat1._14, mat2._31, mat1._24, mat2._32, mat1._34,
                         mat2._33, mat1._44, mat2._34);
 
-  pOut->_41 = MulAdd(mat1._11, mat2._41, mat1._21, mat2._42, mat1._31,
+  pOut->_41 = Dot<T>(mat1._11, mat2._41, mat1._21, mat2._42, mat1._31,
                         mat2._43, mat1._41, mat2._44);
-  pOut->_42 = MulAdd(mat1._12, mat2._41, mat1._22, mat2._42, mat1._32,
+  pOut->_42 = Dot<T>(mat1._12, mat2._41, mat1._22, mat2._42, mat1._32,
                         mat2._43, mat1._42, mat2._44);
-  pOut->_43 = MulAdd(mat1._13, mat2._41, mat1._23, mat2._42, mat1._33,
+  pOut->_43 = Dot<T>(mat1._13, mat2._41, mat1._23, mat2._42, mat1._33,
                         mat2._43, mat1._43, mat2._44);
-  pOut->_44 = MulAdd(mat1._14, mat2._41, mat1._24, mat2._42, mat1._34,
+  pOut->_44 = Dot<T>(mat1._14, mat2._41, mat1._24, mat2._42, mat1._34,
                         mat2._43, mat1._44, mat2._44);
 }
 
@@ -1005,19 +989,19 @@ template <typename T>
 void Inverse33(TMatrix44<T> *pOut, const TMatrix44<T> &matIn) {
   assert(pOut);
 
-  pOut->_11 = MulSub(matIn._22, matIn._33, matIn._23, matIn._32);
-  pOut->_12 = -MulSub(matIn._21, matIn._33, matIn._23, matIn._31);
-  pOut->_13 = MulSub(matIn._21, matIn._32, matIn._22, matIn._31);
+  pOut->_11 = Cross<T>(matIn._22, matIn._33, matIn._23, matIn._32);
+  pOut->_12 = -Cross<T>(matIn._21, matIn._33, matIn._23, matIn._31);
+  pOut->_13 = Cross<T>(matIn._21, matIn._32, matIn._22, matIn._31);
 
-  pOut->_21 = -MulSub(matIn._12, matIn._33, matIn._13, matIn._32);
-  pOut->_22 = MulSub(matIn._11, matIn._33, matIn._13, matIn._31);
-  pOut->_23 = -MulSub(matIn._11, matIn._32, matIn._12, matIn._31);
+  pOut->_21 = -Cross<T>(matIn._12, matIn._33, matIn._13, matIn._32);
+  pOut->_22 = Cross<T>(matIn._11, matIn._33, matIn._13, matIn._31);
+  pOut->_23 = -Cross<T>(matIn._11, matIn._32, matIn._12, matIn._31);
 
-  pOut->_31 = MulSub(matIn._12, matIn._23, matIn._13, matIn._22);
-  pOut->_32 = -MulSub(matIn._11, matIn._23, matIn._13, matIn._21);
-  pOut->_33 = MulSub(matIn._11, matIn._22, matIn._12, matIn._21);
+  pOut->_31 = Cross<T>(matIn._12, matIn._23, matIn._13, matIn._22);
+  pOut->_32 = -Cross<T>(matIn._11, matIn._23, matIn._13, matIn._21);
+  pOut->_33 = Cross<T>(matIn._11, matIn._22, matIn._12, matIn._21);
 
-  auto fDet = MulAdd(matIn._11, pOut->_11, matIn._21, pOut->_21,
+  auto fDet = Dot<T>(matIn._11, pOut->_11, matIn._21, pOut->_21,
                      matIn._31, pOut->_31);
 
   if (!IsAlmostZero(fDet - One<T>())) {
@@ -1041,12 +1025,12 @@ template <typename T>
 void Inverse(TMatrix44<T> *pOut, const TMatrix44<T> &matIn) {
   assert(pOut);
 
-  auto fB0 = MulSub(matIn._13, matIn._24, matIn._23, matIn._14);
-  auto fB1 = MulSub(matIn._13, matIn._34, matIn._33, matIn._14);
-  auto fB2 = MulSub(matIn._13, matIn._44, matIn._43, matIn._14);
-  auto fB3 = MulSub(matIn._23, matIn._34, matIn._33, matIn._24);
-  auto fB4 = MulSub(matIn._23, matIn._44, matIn._43, matIn._24);
-  auto fB5 = MulSub(matIn._33, matIn._44, matIn._43, matIn._34);
+  auto fB0 = Cross<T>(matIn._13, matIn._24, matIn._23, matIn._14);
+  auto fB1 = Cross<T>(matIn._13, matIn._34, matIn._33, matIn._14);
+  auto fB2 = Cross<T>(matIn._13, matIn._44, matIn._43, matIn._14);
+  auto fB3 = Cross<T>(matIn._23, matIn._34, matIn._33, matIn._24);
+  auto fB4 = Cross<T>(matIn._23, matIn._44, matIn._43, matIn._24);
+  auto fB5 = Cross<T>(matIn._33, matIn._44, matIn._43, matIn._34);
 
   pOut->_11 = (matIn._22 * fB5 - matIn._32 * fB4 + matIn._42 * fB3);
   pOut->_12 = (-matIn._12 * fB5 + matIn._32 * fB2 - matIn._42 * fB1);
@@ -1058,12 +1042,12 @@ void Inverse(TMatrix44<T> *pOut, const TMatrix44<T> &matIn) {
   pOut->_23 = (-matIn._11 * fB4 + matIn._21 * fB2 - matIn._41 * fB0);
   pOut->_24 = (matIn._11 * fB3 - matIn._21 * fB1 + matIn._31 * fB0);
 
-  auto fA0 = MulSub(matIn._11, matIn._22, matIn._21, matIn._12);
-  auto fA1 = MulSub(matIn._11, matIn._32, matIn._31, matIn._12);
-  auto fA2 = MulSub(matIn._11, matIn._42, matIn._41, matIn._12);
-  auto fA3 = MulSub(matIn._21, matIn._32, matIn._31, matIn._22);
-  auto fA4 = MulSub(matIn._21, matIn._42, matIn._41, matIn._22);
-  auto fA5 = MulSub(matIn._31, matIn._42, matIn._41, matIn._32);
+  auto fA0 = Cross<T>(matIn._11, matIn._22, matIn._21, matIn._12);
+  auto fA1 = Cross<T>(matIn._11, matIn._32, matIn._31, matIn._12);
+  auto fA2 = Cross<T>(matIn._11, matIn._42, matIn._41, matIn._12);
+  auto fA3 = Cross<T>(matIn._21, matIn._32, matIn._31, matIn._22);
+  auto fA4 = Cross<T>(matIn._21, matIn._42, matIn._41, matIn._22);
+  auto fA5 = Cross<T>(matIn._31, matIn._42, matIn._41, matIn._32);
 
   pOut->_31 = (matIn._24 * fA5 - matIn._34 * fA4 + matIn._44 * fA3);
   pOut->_32 = (-matIn._14 * fA5 + matIn._34 * fA2 - matIn._44 * fA1);
@@ -1075,8 +1059,8 @@ void Inverse(TMatrix44<T> *pOut, const TMatrix44<T> &matIn) {
   pOut->_43 = (-matIn._13 * fA4 + matIn._23 * fA2 - matIn._43 * fA0);
   pOut->_44 = (matIn._13 * fA3 - matIn._23 * fA1 + matIn._33 * fA0);
 
-  auto fDet = MulAdd(fA0, fB5, fA2, fB3, fA3, fB2, fA5, fB0) -
-              MulAdd(fA1, fB4, fA4, fB1);
+  auto fDet = Dot<T>(fA0, fB5, fA2, fB3, fA3, fB2, fA5, fB0) -
+              Dot<T>(fA1, fB4, fA4, fB1);
 
   if (!IsAlmostZero(fDet - One<T>())) {
     auto fDetInv = Inverse<T>(fDet);
