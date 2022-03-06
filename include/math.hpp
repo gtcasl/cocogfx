@@ -469,6 +469,10 @@ inline int32_t Add8(int32_t lhs, int32_t rhs) {
   return std::min<int32_t>(lhs + rhs, 0xff);
 }
 
+inline int32_t Sub8(int32_t lhs, int32_t rhs) {
+  return std::max<int32_t>(lhs - rhs, 0);
+}
+
 inline int32_t Lerp8(int32_t lhs, int32_t rhs, int32_t frac) {
   return lhs + ((frac * (rhs - lhs) + 0xff) >> 8);
 }

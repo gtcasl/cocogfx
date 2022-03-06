@@ -58,6 +58,7 @@ DISABLE_WARNING_POP
     this->b = static_cast<uint8_t>(b);
     this->g = static_cast<uint8_t>(g);
     this->r = static_cast<uint8_t>(r);
+    this->a = 0xff;
   }
 
   ColorARGB(uint32_t value) {
