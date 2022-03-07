@@ -1240,12 +1240,15 @@ void ClipToScreen(TVector4<T>* out, const TVector4<T>& in, uint32_t width, uint3
 
 // Calculate triangle bounding box
 template <typename T>
-void CalcBoundingBox(TRect<T>* pOut, const TVector2<T>& v0, const TVector2<T>& v1, const TVector2<T>& v2) {
+void CalcBoundingBox(TRect<T>* pOut, 
+                     const TVector2<T>& v0, 
+                     const TVector2<T>& v1, 
+                     const TVector2<T>& v2) {
     // Find min/max 
-    pOut->left   = static_cast<int32_t>(std::min(v0.x, std::min(v1.x, v2.x)));
-    pOut->right  = static_cast<int32_t>(std::max(v0.x, std::max(v1.x, v2.x)));
-    pOut->top    = static_cast<int32_t>(std::min(v0.y, std::min(v1.y, v2.y)));
-    pOut->bottom = static_cast<int32_t>(std::max(v0.y, std::max(v1.y, v2.y)));
+    pOut->left   = static_cast<T>(std::min(v0.x, std::min(v1.x, v2.x)));
+    pOut->right  = static_cast<T>(std::max(v0.x, std::max(v1.x, v2.x)));
+    pOut->top    = static_cast<T>(std::min(v0.y, std::min(v1.y, v2.y)));
+    pOut->bottom = static_cast<T>(std::max(v0.y, std::max(v1.y, v2.y)));
 }
 
 template <typename T>
