@@ -17,6 +17,7 @@
 #include "common.hpp"
 #include "uint24.hpp"
 #include "color.hpp"
+#include <type_traits>
 
 namespace cocogfx {
 

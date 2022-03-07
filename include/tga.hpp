@@ -1,6 +1,5 @@
-#include <cstdint>
-#include <vector>
 #include "common.hpp"
+#include <vector>
 
 namespace cocogfx {
 

@@ -14,8 +14,6 @@
 //
 #pragma once
 
-#include <cstdint>
-#include <assert.h>
 #include "common.hpp"
 
 namespace cocogfx {

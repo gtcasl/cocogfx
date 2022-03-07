@@ -14,10 +14,10 @@
 //
 #pragma once
 
-#include <algorithm>
-#include <math.h>
 #include "common.hpp"
 #include "fixed.hpp"
+#include <algorithm>
+#include <math.h>
 
 namespace cocogfx {
 

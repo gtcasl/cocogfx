@@ -1,8 +1,5 @@
 #pragma once
 
-#include <cstdint>
-#include <cstdlib>
-#include <assert.h>
 #include "common.hpp"
 
 namespace cocogfx {
