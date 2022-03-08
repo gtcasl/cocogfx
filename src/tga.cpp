@@ -109,14 +109,14 @@ int cocogfx::SaveTGA(const char *filename,
   ofs.write(reinterpret_cast<char *>(&header), sizeof(tga_header_t));
 
   // write pixel data
-  const uint8_t* pixel_bytes = pixels + (height - 1) * pitch;
+  const uint8_t* pixel_bytes = pixels;
   for (uint32_t y = 0; y < height; ++y) {
     const uint8_t* pixel_row = pixel_bytes;
     for (uint32_t x = 0; x < width; ++x) {
       ofs.write((const char*)pixel_row, bpp);      
       pixel_row += bpp;
     }
-    pixel_bytes -= pitch;
+    pixel_bytes += pitch;
   }
 
   return 0;
