@@ -4,4 +4,5 @@
 #include "uint24.hpp"
 #include "tga.hpp"
 #include "png.hpp"
+#include "bmp.hpp"
 #include "math.hpp"

@@ -114,7 +114,7 @@ int cocogfx::SavePNG(const char *filename,
   header.bfSize = header.bfOffBits + bmp_info.bmiHeader.biSizeImage;
 
   auto pBits = pixels.data();
-  
+
   auto pFile = fopen(filename, "w");
   if (nullptr == pFile) {
     return -1;
@@ -147,5 +147,7 @@ int cocogfx::SavePNG(const char *filename,
     }
   }
 
-  fclose(pFile);    
+  fclose(pFile);  
+
+  return 0;  
 }
