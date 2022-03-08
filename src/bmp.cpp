@@ -64,10 +64,11 @@ int cocogfx::LoadPNG(const char */*filename*/,
 }
 
 int cocogfx::SavePNG(const char *filename, 
-                     const std::vector<uint8_t> &pixels, 
+                     const uint8_t* pixels, 
                      uint32_t width,
                      uint32_t height, 
-                     uint32_t bpp) {
+                     uint32_t bpp,
+                     int32_t pitch) {
   BITMAPFILEHEADER header;
   header.bfSize = 0;
   header.bfType = BF_TYPE;
@@ -113,7 +114,13 @@ int cocogfx::SavePNG(const char *filename,
   header.bfOffBits = sizeof(BITMAPFILEHEADER) + infoSize;
   header.bfSize = header.bfOffBits + bmp_info.bmiHeader.biSizeImage;
 
-  auto pBits = pixels.data();
+  auto pBits = pixels;
+
+  if (pitch < 0) {
+    bmp_info.bmiHeader.biHeight *= -1;
+    int32_t offset = pitch * (height - 1);
+    pBits += offset;
+  }
 
   auto pFile = fopen(filename, "w");
   if (nullptr == pFile) {
@@ -134,13 +141,13 @@ int cocogfx::SavePNG(const char *filename,
   if (4 == bpp) {
     for (uint32_t offset = 0; offset < bmp_info.bmiHeader.biSizeImage;
          offset += 3) {
-      if (fwrite(pBits + (4 * (offset / 3)), 1, 3, pFile) != 3) {
+      if (fwrite(pixels + (4 * (offset / 3)), 1, 3, pFile) != 3) {
         fclose(pFile);
         return -1;
       }
     }
   } else {
-    if (fwrite(pBits, 1, bmp_info.bmiHeader.biSizeImage, pFile) !=
+    if (fwrite(pixels, 1, bmp_info.bmiHeader.biSizeImage, pFile) !=
         bmp_info.bmiHeader.biSizeImage) {
       fclose(pFile);
       return -1;

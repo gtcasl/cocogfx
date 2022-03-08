@@ -10,9 +10,10 @@ int LoadBMP(const char *filename,
             uint32_t *bpp);
 
 int SaveBMP(const char *filename, 
-            const std::vector<uint8_t> &pixels, 
+            const uint8_t* pixels, 
             uint32_t width,
             uint32_t height, 
-            uint32_t bpp);
+            uint32_t bpp,
+            int32_t pitch);
 
 }

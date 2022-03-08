@@ -75,10 +75,11 @@ int cocogfx::LoadTGA(const char *filename,
 }
 
 int cocogfx::SaveTGA(const char *filename, 
-                     const std::vector<uint8_t> &pixels, 
+                     const uint8_t* pixels, 
                      uint32_t width, 
                      uint32_t height, 
-                     uint32_t bpp) {              
+                     uint32_t bpp,
+                     int32_t pitch) {              
   std::ofstream ofs(filename, std::ios::out | std::ios::binary);
   if (!ofs.is_open()) {
     std::cerr << "couldn't create file: " << filename << "!" << std::endl;
@@ -108,8 +109,7 @@ int cocogfx::SaveTGA(const char *filename,
   ofs.write(reinterpret_cast<char *>(&header), sizeof(tga_header_t));
 
   // write pixel data
-  uint32_t pitch = bpp * width;
-  const uint8_t* pixel_bytes = pixels.data() + (height - 1) * pitch;
+  const uint8_t* pixel_bytes = pixels + (height - 1) * pitch;
   for (uint32_t y = 0; y < height; ++y) {
     const uint8_t* pixel_row = pixel_bytes;
     for (uint32_t x = 0; x < width; ++x) {
