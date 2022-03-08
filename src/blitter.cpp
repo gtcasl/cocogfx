@@ -21,16 +21,16 @@ int cocogfx::CopyBuffers(std::vector<uint8_t>& dst_pixels,
                          ePixelFormat dst_format,
                          uint32_t dst_width,
                          uint32_t dst_height,
-                         uint32_t dst_pitch,
-                         uint32_t dst_offsetx,
-                         uint32_t dst_offsety,                
-                         const std::vector<uint8_t>& src_pixels,
+                         int32_t dst_pitch,
+                         int32_t dst_offsetx,
+                         int32_t dst_offsety,                
+                         const uint8_t* src_pixels,
                          ePixelFormat src_format,
                          uint32_t src_width,
                          uint32_t src_height,
-                         uint32_t src_pitch,
-                         uint32_t src_offsetx,
-                         uint32_t src_offsety,                                     
+                         int32_t src_pitch,
+                         int32_t src_offsetx,
+                         int32_t src_offsety,                                     
                          uint32_t width, 
                          uint32_t height) {  
   auto& src_fmtinfo = Format::GetInfo(src_format);
@@ -53,11 +53,6 @@ int cocogfx::CopyBuffers(std::vector<uint8_t>& dst_pixels,
     return -1;
   }
 
-  if (((src_offsety + height) * src_pitch) > src_pixels.size()) {
-    std::cerr << "out of range source buffer" << std::endl;
-    return -1;
-  }
-
   if (((dst_offsety + height) * dst_pitch) > dst_pixels.size()) {
     std::cerr << "out of range destination buffer" << std::endl;
     return -1;
@@ -66,7 +61,7 @@ int cocogfx::CopyBuffers(std::vector<uint8_t>& dst_pixels,
   auto src_stride = src_fmtinfo.BytePerPixel;
   auto dst_stride = dst_fmtinfo.BytePerPixel;
 
-  auto pbSrc = src_pixels.data() + src_offsetx * src_stride + src_offsety * src_pitch;
+  auto pbSrc = src_pixels + src_offsetx * src_stride + src_offsety * src_pitch;
   auto pbDst = dst_pixels.data() + dst_offsetx * dst_stride + dst_offsety * dst_pitch;
 
   auto src_nformat = Format::GetNativeFormat((ePixelFormat)src_format);
@@ -100,15 +95,13 @@ int cocogfx::CopyBuffers(std::vector<uint8_t>& dst_pixels,
 
 int cocogfx::ConvertImage(std::vector<uint8_t>& dst_pixels,
                           ePixelFormat dst_format,
-                          const std::vector<uint8_t>& src_pixels,
+                          const uint8_t* src_pixels,
                           ePixelFormat src_format,
                           uint32_t src_width,
                           uint32_t src_height,                 
-                          uint32_t src_pitch) {
+                          int32_t src_pitch) {
   uint32_t dst_pitch = Format::GetInfo(dst_format).BytePerPixel * src_width;
-
   dst_pixels.resize(dst_pitch * src_height);
-
   return CopyBuffers(    
     dst_pixels,
     dst_format,
@@ -131,11 +124,11 @@ int cocogfx::ConvertImage(std::vector<uint8_t>& dst_pixels,
 
 int cocogfx::GenerateMipmaps(std::vector<uint8_t>& dst_pixels,
                              std::vector<uint32_t>& mip_offsets,
-                             const std::vector<uint8_t>& src_pixels,
+                             const uint8_t* src_pixels,
                              ePixelFormat format,
                              uint32_t src_width,
                              uint32_t src_height,
-                             uint32_t src_pitch) {
+                             int32_t src_pitch) {
   uint32_t bpp = Format::GetInfo(format).BytePerPixel;
   uint32_t src_logwidth  = log2ceil(src_width);
   uint32_t src_logheight = log2ceil(src_height);
@@ -172,7 +165,7 @@ int cocogfx::GenerateMipmaps(std::vector<uint8_t>& dst_pixels,
     
     // copy lower levels
     
-    auto pSrc = src_pixels.data();
+    auto pSrc = src_pixels;
     auto pDst = dst_pixels.data();
 
     pSrc = pDst;

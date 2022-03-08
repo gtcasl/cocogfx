@@ -24,33 +24,33 @@ int CopyBuffers(std::vector<uint8_t>& dst_pixels,
                 ePixelFormat dst_format,
                 uint32_t dst_width,
                 uint32_t dst_height,
-                uint32_t dst_pitch,
-                uint32_t dst_offsetx,
-                uint32_t dst_offsety,                
-                const std::vector<uint8_t>& src_pixels,
+                int32_t dst_pitch,
+                int32_t dst_offsetx,
+                int32_t dst_offsety,                
+                const uint8_t* src_pixels,
                 ePixelFormat src_format,
                 uint32_t src_width,
                 uint32_t src_height,
-                uint32_t src_pitch,
-                uint32_t src_offsetx,
-                uint32_t src_offsety,                                     
+                int32_t src_pitch,
+                int32_t src_offsetx,
+                int32_t src_offsety,                                     
                 uint32_t width, 
                 uint32_t height);
 
 int ConvertImage(std::vector<uint8_t>& dst_pixels,
                  ePixelFormat dst_format,
-                 const std::vector<uint8_t>& src_pixels,
+                 const uint8_t* src_pixels,
                  ePixelFormat src_format,
                  uint32_t src_width,
                  uint32_t src_height,                   
-                 uint32_t src_pitch);
+                 int32_t src_pitch);
 
 int GenerateMipmaps(std::vector<uint8_t>& dst_pixels,
                     std::vector<uint32_t>& mip_offsets,
-                    const std::vector<uint8_t>& src_pixels,
+                    const uint8_t* src_pixels,
                     ePixelFormat src_format,
                     uint32_t src_width,
                     uint32_t src_height,
-                    uint32_t src_pitch);
+                    int32_t src_pitch);
 
 }
