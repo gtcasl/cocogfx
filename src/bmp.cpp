@@ -1,8 +1,5 @@
-#include "png.hpp"
-#include "lupng.h"
-#include <fstream>
+#include "bmp.hpp"
 #include <iostream>
-#include <cstring>
 
 using namespace cocogfx;
 
@@ -54,7 +51,7 @@ struct __attribute__((__packed__)) BITMAPINFO {
 
 #endif
 
-int cocogfx::LoadPNG(const char */*filename*/, 
+int cocogfx::LoadBMP(const char */*filename*/, 
                      std::vector<uint8_t> &/*pixels*/, 
                      uint32_t */*width*/,
                      uint32_t */*height*/,
@@ -63,7 +60,7 @@ int cocogfx::LoadPNG(const char */*filename*/,
   return -1;
 }
 
-int cocogfx::SavePNG(const char *filename, 
+int cocogfx::SaveBMP(const char *filename, 
                      const uint8_t* pixels, 
                      uint32_t width,
                      uint32_t height, 
