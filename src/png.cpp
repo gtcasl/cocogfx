@@ -82,26 +82,19 @@ int cocogfx::LoadPNG(const char *filename,
   png_get_IHDR(png, png_info, &pwidth, &pheight, &depth, &colorType, NULL, NULL, NULL);
   channels = png_get_channels(png, png_info);
 
-	// allocate a vector of row pointers
+	// read pixels
   uint32_t pitch = pwidth * channels;
-	std::vector<uint8_t*> img_rows(pheight);
-	for (uint32_t y = 0; y < pheight; ++y) {
-    img_rows.at(y) = new uint8_t[pitch];
-  }
-
-	// read the whole image
-	png_read_image(png, img_rows.data());
+  pixels.resize(pheight * pitch);
+  auto dst_rows = pixels.data();
+  for (uint32_t y = 0; y < pheight; ++y) {
+    png_read_row(png, dst_rows, NULL);
+    dst_rows += pitch;
+  }	
   png_read_end(png, png_info);
 
 	png_destroy_read_struct(&png, &png_info, NULL);
 
 	fclose(file);
-
-  pixels.resize(pwidth * pheight * channels);
-  for (uint32_t y = 0; y < pheight; ++y) {
-    memcpy(pixels.data() + y * pitch, img_rows.at(y), pitch);
-    delete [] img_rows.at(y);
-  }
 
   *width  = pwidth;
 	*height = pheight;
@@ -152,16 +145,12 @@ int cocogfx::SavePNG(const char *filename,
 	// swap the BGR pixels in the DiData structure to RGB
 	png_set_bgr(png);
 
-  // allocate a vector of row pointers
-	std::vector<const uint8_t*> img_rows(height);
+  // write pixels
   auto src_rows = pixels;
 	for (uint32_t y = 0; y < height; ++y) {
-    img_rows.at(y) = src_rows;
+    png_write_row(png, (uint8_t*)src_rows);
     src_rows += pitch;
-  }
-
-	// write the whole image
-	png_write_image(png, (uint8_t**)img_rows.data());
+  }	
 	png_write_end(png, png_info);
 
 	png_destroy_write_struct(&png, (png_infopp) NULL);
