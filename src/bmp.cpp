@@ -80,7 +80,7 @@ int cocogfx::SaveBMP(const char *filename,
 
   bmp_info.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
   bmp_info.bmiHeader.biWidth = width;
-  bmp_info.bmiHeader.biHeight = height;
+  bmp_info.bmiHeader.biHeight = -height;
   bmp_info.bmiHeader.biPlanes = 1;
   bmp_info.bmiHeader.biXPelsPerMeter = 0;
   bmp_info.bmiHeader.biYPelsPerMeter = 0;
