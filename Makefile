@@ -1,6 +1,6 @@
 CXXFLAGS += -std=c++17 -fPIC -Wall -Wextra -Wfatal-errors
 
-CXXFLAGS += -DLUPNG_USE_ZLIB -Iinclude
+CXXFLAGS += -Iinclude
 
 LDFLAGS += 
 
