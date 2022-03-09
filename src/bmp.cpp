@@ -121,6 +121,7 @@ int cocogfx::SaveBMP(const char *filename,
 
   auto pFile = fopen(filename, "w");
   if (nullptr == pFile) {
+    std::cerr << "couldn't open file: " << filename << "!" << std::endl;
     return -1;
   }
 
