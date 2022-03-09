@@ -138,13 +138,13 @@ int cocogfx::SaveBMP(const char *filename,
   if (4 == bpp) {
     for (uint32_t offset = 0; offset < bmp_info.bmiHeader.biSizeImage;
          offset += 3) {
-      if (fwrite(pixels + (4 * (offset / 3)), 1, 3, pFile) != 3) {
+      if (fwrite(pBits + (4 * (offset / 3)), 1, 3, pFile) != 3) {
         fclose(pFile);
         return -1;
       }
     }
   } else {
-    if (fwrite(pixels, 1, bmp_info.bmiHeader.biSizeImage, pFile) !=
+    if (fwrite(pBits, 1, bmp_info.bmiHeader.biSizeImage, pFile) !=
         bmp_info.bmiHeader.biSizeImage) {
       fclose(pFile);
       return -1;
