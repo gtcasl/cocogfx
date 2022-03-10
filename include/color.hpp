@@ -66,6 +66,13 @@ DISABLE_WARNING_POP
   operator uint32_t() const {
     return this->value;
   }
+
+  uint32_t rgba() const {
+    return (this->r << 0) 
+         | (this->g << 8) 
+         | (this->b << 16) 
+         | (this->a << 24);
+  }
 };
 
 }
