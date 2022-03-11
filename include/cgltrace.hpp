@@ -143,18 +143,18 @@ public:
     eBlendOp blend_dst;
   };
 
-  struct draw_t {
+  struct drawcall_t {
     states_t states;
     uint32_t texture_id;
     std::unordered_map<uint32_t, vertex_t> vertices;
     std::vector<primitive_t> primitives;
   };
 
-  std::vector<draw_t> draws;
+  std::vector<drawcall_t> drawcalls;
   std::unordered_map<uint32_t, texture_t> textures;  
 
   int load(const char* filename);
-    
+
   int save(const char* filename);
 };
 

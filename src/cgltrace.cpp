@@ -264,39 +264,39 @@ std::istream& operator>>(std::istream& is, CGLTrace::states_t& states) {
 
 ///////////////////////////////////////////////////////////////////////////////
 
-std::ostream& operator<<(std::ostream& os, const CGLTrace::draw_t& draw) {
-  os << draw.states << draw.texture_id;
+std::ostream& operator<<(std::ostream& os, const CGLTrace::drawcall_t& drawcall) {
+  os << drawcall.states << drawcall.texture_id;
   {
-    os << (uint32_t)draw.vertices.size();
-    for (auto it : draw.vertices) {
+    os << (uint32_t)drawcall.vertices.size();
+    for (auto it : drawcall.vertices) {
       os << it.first << it.second;
     }
   }
   {
-    os << draw.primitives.size();
-    for (auto& primitive : draw.primitives) {
+    os << drawcall.primitives.size();
+    for (auto& primitive : drawcall.primitives) {
       os << primitive;
     }
   }
   return os;
 }
 
-std::istream& operator>>(std::istream& is, CGLTrace::draw_t& draw) {
-  is >> draw.states >> draw.texture_id;
+std::istream& operator>>(std::istream& is, CGLTrace::drawcall_t& drawcall) {
+  is >> drawcall.states >> drawcall.texture_id;
   {
     uint32_t vertices_size;
     is >> vertices_size;
     for (uint32_t i = 0; i < vertices_size; ++i) {
       uint32_t index;
       is >> index;
-      is >> draw.vertices[index];
+      is >> drawcall.vertices[index];
     }
   }
   {
     uint32_t primitives_size;
     is >> primitives_size;
-    draw.primitives.resize(primitives_size);
-    for (auto& primitive : draw.primitives) {
+    drawcall.primitives.resize(primitives_size);
+    for (auto& primitive : drawcall.primitives) {
       is >> primitive;
     }
   }
@@ -307,9 +307,9 @@ std::istream& operator>>(std::istream& is, CGLTrace::draw_t& draw) {
 
 std::ostream& operator<<(std::ostream& os, const CGLTrace& trace) {
   {
-    os << (uint32_t)trace.draws.size();
-    for (auto& draw : trace.draws) {
-      os << draw;
+    os << (uint32_t)trace.drawcalls.size();
+    for (auto& drawcall : trace.drawcalls) {
+      os << drawcall;
     }
   }
   {
@@ -325,9 +325,9 @@ std::istream& operator>>(std::istream& is, CGLTrace& trace) {
   {
     uint32_t draws_size;
     is >> draws_size;
-    trace.draws.resize(draws_size);
-    for (auto& draw : trace.draws) {
-      is >> draw;
+    trace.drawcalls.resize(draws_size);
+    for (auto& drawcall : trace.drawcalls) {
+      is >> drawcall;
     }
   }
   {
