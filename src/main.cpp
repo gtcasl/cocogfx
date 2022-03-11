@@ -1,3 +1,4 @@
+#include "cgltrace.hpp"
 #include "blitter.hpp"
 #include "color.hpp"
 #include "format.hpp"
