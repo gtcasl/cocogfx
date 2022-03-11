@@ -103,7 +103,7 @@ static std::istream& operator>>(std::istream& is, CGLTrace::eBlendOp& op) {
 ///////////////////////////////////////////////////////////////////////////////
 
 std::ostream& operator<<(std::ostream& os, const CGLTrace::pos_t& pos) {
-  os << pos.x << pos.y << pos.z << pos.w;
+  os << pos.x << std::endl << pos.y << std::endl << pos.z << std::endl << pos.w;
   return os;
 }
 
@@ -115,7 +115,7 @@ std::istream& operator>>(std::istream& is, CGLTrace::pos_t& pos) {
 ///////////////////////////////////////////////////////////////////////////////
 
 std::ostream& operator<<(std::ostream& os, const CGLTrace::color_t& color) {
-  os << color.r << color.g << color.b << color.a;
+  os << color.r << std::endl << color.g << std::endl << color.b << std::endl << color.a;
   return os;
 }
 
@@ -127,7 +127,7 @@ std::istream& operator>>(std::istream& is, CGLTrace::color_t& color) {
 ///////////////////////////////////////////////////////////////////////////////
 
 std::ostream& operator<<(std::ostream& os, const CGLTrace::texcoord_t& texcoord) {
-  os << texcoord.u << texcoord.v;
+  os << texcoord.u << std::endl << texcoord.v;
   return os;
 }
 
@@ -139,7 +139,7 @@ std::istream& operator>>(std::istream& is, CGLTrace::texcoord_t& texcoord) {
 ///////////////////////////////////////////////////////////////////////////////
 
 std::ostream& operator<<(std::ostream& os, const CGLTrace::vertex_t& vertex) {
-  os << vertex.pos << vertex.color << vertex.texcoord;
+  os << vertex.pos << std::endl << vertex.color << std::endl << vertex.texcoord;
   return os;
 }
 
@@ -151,7 +151,7 @@ std::istream& operator>>(std::istream& is, CGLTrace::vertex_t& vertex) {
 ///////////////////////////////////////////////////////////////////////////////
 
 std::ostream& operator<<(std::ostream& os, const CGLTrace::primitive_t& primitive) {
-  os << primitive.i0 << primitive.i1 << primitive.i2;
+  os << primitive.i0 << std::endl << primitive.i1 << std::endl << primitive.i2;
   return os;
 }
 
@@ -171,12 +171,10 @@ bool CGLTrace::texture_t::operator==(const CGLTrace::texture_t& rhs) const {
 }
 
 std::ostream& operator<<(std::ostream& os, const CGLTrace::texture_t& texture) {
-  os << texture.format << texture.width << texture.height;
+  os << texture.format << std::endl << texture.width << std::endl << texture.height;
   {
-    os << (uint32_t)texture.pixels.size();
-    for (auto pixel : texture.pixels) {
-      os << pixel;
-    }
+    os << std::endl << (uint32_t)texture.pixels.size() << std::endl;
+    os.write((char*)texture.pixels.data(), texture.pixels.size());
   }
   return os;
 }
@@ -187,9 +185,7 @@ std::istream& operator>>(std::istream& is, CGLTrace::texture_t& texture) {
     uint32_t pixels_size;
     is >> pixels_size;
     texture.pixels.resize(pixels_size);
-    for (auto& pixel : texture.pixels) {
-      is >> pixel;
-    }
+    is.read((char*)texture.pixels.data(), texture.pixels.size());
   }
   return is;
 }
@@ -197,34 +193,34 @@ std::istream& operator>>(std::istream& is, CGLTrace::texture_t& texture) {
 ///////////////////////////////////////////////////////////////////////////////
 
 std::ostream& operator<<(std::ostream& os, const CGLTrace::states_t& states) {
-  os << states.color_enabled;
-  os << states.color_format;
-  os << states.color_writemask;
+  os << states.color_enabled << std::endl;
+  os << states.color_format << std::endl;
+  os << states.color_writemask << std::endl;
 
-  os << states.depth_test;
-  os << states.depth_writemask;
-  os << states.depth_format; 
-  os << states.depth_func;
+  os << states.depth_test << std::endl;
+  os << states.depth_writemask << std::endl;
+  os << states.depth_format << std::endl; 
+  os << states.depth_func << std::endl;
   
-  os << states.stencil_test;
-  os << states.stencil_func;
-  os << states.stencil_zpass;
-  os << states.stencil_zfail;
-  os << states.stencil_fail;
-  os << states.stencil_ref;
-  os << states.stencil_mask;
-  os << states.stencil_writemask;
+  os << states.stencil_test << std::endl;
+  os << states.stencil_func << std::endl;
+  os << states.stencil_zpass << std::endl;
+  os << states.stencil_zfail << std::endl;
+  os << states.stencil_fail << std::endl;
+  os << states.stencil_ref << std::endl;
+  os << states.stencil_mask << std::endl;
+  os << states.stencil_writemask << std::endl;
   
-  os << states.texture_enabled;
-  os << states.texture_envcolor;
-  os << states.texture_envmode;
-  os << states.texture_minfilter;
-  os << states.texture_magfilter;
-  os << states.texture_addressU;
-  os << states.texture_addressV;
+  os << states.texture_enabled << std::endl;
+  os << states.texture_envcolor << std::endl;
+  os << states.texture_envmode << std::endl;
+  os << states.texture_minfilter << std::endl;
+  os << states.texture_magfilter << std::endl;
+  os << states.texture_addressU << std::endl;
+  os << states.texture_addressV << std::endl;
 
-  os << states.blend_enabled;
-  os << states.blend_src;
+  os << states.blend_enabled << std::endl;
+  os << states.blend_src << std::endl;
   os << states.blend_dst;
   return os;
 }
@@ -265,17 +261,17 @@ std::istream& operator>>(std::istream& is, CGLTrace::states_t& states) {
 ///////////////////////////////////////////////////////////////////////////////
 
 std::ostream& operator<<(std::ostream& os, const CGLTrace::drawcall_t& drawcall) {
-  os << drawcall.states << drawcall.texture_id;
+  os << drawcall.states << std::endl << drawcall.texture_id;
   {
-    os << (uint32_t)drawcall.vertices.size();
+    os << std::endl << (uint32_t)drawcall.vertices.size();
     for (auto it : drawcall.vertices) {
-      os << it.first << it.second;
+      os << std::endl << it.first << std::endl << it.second;
     }
   }
   {
-    os << drawcall.primitives.size();
+    os << std::endl << drawcall.primitives.size();
     for (auto& primitive : drawcall.primitives) {
-      os << primitive;
+      os << std::endl << primitive;
     }
   }
   return os;
@@ -309,13 +305,13 @@ std::ostream& operator<<(std::ostream& os, const CGLTrace& trace) {
   {
     os << (uint32_t)trace.drawcalls.size();
     for (auto& drawcall : trace.drawcalls) {
-      os << drawcall;
+      os << std::endl << drawcall;
     }
   }
   {
-    os << (uint32_t)trace.textures.size();
+    os << std::endl << (uint32_t)trace.textures.size();
     for (auto it : trace.textures) {
-      os << it.first << it.second;
+      os << std::endl << it.first << std::endl << it.second;
     }
   }
   return os;
