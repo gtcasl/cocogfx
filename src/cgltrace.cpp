@@ -215,8 +215,7 @@ std::ostream& operator<<(std::ostream& os, const CGLTrace::states_t& states) {
   os << states.stencil_mask;
   os << states.stencil_writemask;
   
-  os << states.texture_enabled;  
-  os << states.texture_format;
+  os << states.texture_enabled;
   os << states.texture_envcolor;
   os << states.texture_envmode;
   os << states.texture_minfilter;
@@ -249,8 +248,7 @@ std::istream& operator>>(std::istream& is, CGLTrace::states_t& states) {
   is >> states.stencil_mask;
   is >> states.stencil_writemask;
   
-  is >> states.texture_enabled;  
-  is >> states.texture_format;
+  is >> states.texture_enabled;
   is >> states.texture_envcolor;
   is >> states.texture_envmode;
   is >> states.texture_minfilter;

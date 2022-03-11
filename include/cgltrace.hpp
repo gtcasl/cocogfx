@@ -130,8 +130,7 @@ public:
     uint8_t stencil_mask;
     uint8_t stencil_writemask;
     
-    bool texture_enabled;  
-    ePixelFormat texture_format;
+    bool texture_enabled;
     color_t texture_envcolor;
     eEnvMode texture_envmode;
     eTexFilter texture_minfilter;
