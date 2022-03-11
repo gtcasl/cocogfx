@@ -152,6 +152,10 @@ public:
 
   std::vector<draw_t> draws;
   std::unordered_map<uint32_t, texture_t> textures;  
+
+  int load(const char* filename);
+    
+  int save(const char* filename);
 };
 
 }

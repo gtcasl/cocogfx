@@ -1,4 +1,5 @@
 #include "cgltrace.hpp"
+#include <fstream>
 #include <string.h>
 
 using namespace cocogfx;
@@ -339,4 +340,24 @@ std::istream& operator>>(std::istream& is, CGLTrace& trace) {
     }
   }
   return is;
+}
+
+int CGLTrace::load(const char* filename) {
+  std::ifstream ifs(filename, std::ios::in | std::ios::binary);
+  if (!ifs.is_open()) {
+    std::cerr << "couldn't open file: " << filename << "!" << std::endl;
+    return -1;
+  }
+  ifs >> *this;
+  return 0;
+}
+
+int CGLTrace::save(const char* filename) {
+  std::ofstream ofs(filename, std::ios::out | std::ios::binary);
+  if (!ofs.is_open()) {
+    std::cerr << "couldn't create file: " << filename << "!" << std::endl;
+    return -1;
+  }
+  ofs << *this;
+  return 0;
 }
