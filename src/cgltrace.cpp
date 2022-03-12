@@ -9,6 +9,14 @@
 
 using namespace cocogfx;
 
+bool CGLTrace::texture_t::operator==(const CGLTrace::texture_t& rhs) const {
+  return (format == rhs.format) 
+      && (width == rhs.width)
+      && (height == rhs.height)
+      && (pixels.size() == rhs.pixels.size())
+      && (0 == memcmp(pixels.data(), rhs.pixels.data(), pixels.size()));
+}
+
 namespace boost {
 namespace serialization {
 
