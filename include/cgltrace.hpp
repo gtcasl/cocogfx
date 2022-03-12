@@ -162,6 +162,7 @@ public:
     viewport_t viewport;
   };
 
+  uint32_t version;
   std::vector<drawcall_t> drawcalls;
   std::unordered_map<uint32_t, texture_t> textures;  
 
