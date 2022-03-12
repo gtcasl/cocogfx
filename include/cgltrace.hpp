@@ -115,8 +115,8 @@ public:
 
   struct texture_t {
     ePixelFormat format;
-    uint8_t width;
-    uint8_t height;
+    uint32_t width;
+    uint32_t height;
     std::vector<uint8_t> pixels;
 
     bool operator==(const texture_t& rhs) const;
