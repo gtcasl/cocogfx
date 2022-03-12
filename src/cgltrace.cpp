@@ -189,8 +189,10 @@ bool CGLTrace::texture_t::operator==(const CGLTrace::texture_t& rhs) const {
 std::ostream& operator<<(std::ostream& os, const CGLTrace::texture_t& texture) {
   os << texture.format << std::endl << texture.width << std::endl << texture.height;
   {
-    os << std::endl << (uint32_t)texture.pixels.size() << std::endl;
-    os.write((char*)texture.pixels.data(), texture.pixels.size());
+    os << std::endl << (uint32_t)texture.pixels.size();
+    for (auto pixel : texture.pixels) {
+      os << std::endl << pixel;
+    }
   }
   return os;
 }
@@ -201,7 +203,9 @@ std::istream& operator>>(std::istream& is, CGLTrace::texture_t& texture) {
     uint32_t pixels_size;
     is >> pixels_size;
     texture.pixels.resize(pixels_size);
-    is.read((char*)texture.pixels.data(), texture.pixels.size());
+    for (auto& pixel : texture.pixels) {
+      is >> pixel;
+    }
   }
   return is;
 }
