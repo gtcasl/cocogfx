@@ -51,12 +51,6 @@ enum ePixelFormat {
   FORMAT_SIZE_,
 };
 
-#define FORMAT_A      FORMAT_A8
-#define FORMAT_RGB    FORMAT_R5G6B5
-#define FORMAT_RGB_   FORMAT_R8G8B8
-#define FORMAT_ARGB   FORMAT_A8R8G8B8
-#define FORMAT_ARGB_  FORMAT_A4R4G4B4
-
 template <ePixelFormat PixelFormat>
 struct TFormatInfo {};
 
@@ -471,11 +465,11 @@ inline static const FormatInfo &GetInfo(ePixelFormat pixelFormat) {
       __formatInfo(FORMAT_A8),
       __formatInfo(FORMAT_L8),
       __formatInfo(FORMAT_A8L8),
-      __formatInfo(FORMAT_RGB),
-      __formatInfo(FORMAT_ARGB),
+      __formatInfo(FORMAT_R5G6B5),
+      __formatInfo(FORMAT_A8R8G8B8),
       __formatInfo(FORMAT_A1R5G5B5),
-      __formatInfo(FORMAT_RGB_),
-      __formatInfo(FORMAT_ARGB_),
+      __formatInfo(FORMAT_R8G8B8),
+      __formatInfo(FORMAT_A4R4G4B4),
       __formatInfo(FORMAT_R4G4B4A4),
       __formatInfo(FORMAT_R5G5B5A1),
       __formatInfo(FORMAT_B8G8R8),
