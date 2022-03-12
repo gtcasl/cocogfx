@@ -138,6 +138,22 @@ std::istream& operator>>(std::istream& is, CGLTrace::texcoord_t& texcoord) {
 
 ///////////////////////////////////////////////////////////////////////////////
 
+std::ostream& operator<<(std::ostream& os, const CGLTrace::viewport_t& viewport) {
+  os << viewport.left << std::endl << viewport.right << std::endl 
+     << viewport.top << std::endl << viewport.bottom << std::endl 
+     << viewport.near << std::endl << viewport.far;
+  return os;
+}
+
+std::istream& operator>>(std::istream& is, CGLTrace::viewport_t& viewport) {
+  is >> viewport.left >> viewport.right
+     >> viewport.top  >> viewport.bottom
+     >> viewport.near >> viewport.far;
+  return is;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
 std::ostream& operator<<(std::ostream& os, const CGLTrace::vertex_t& vertex) {
   os << vertex.pos << std::endl << vertex.color << std::endl << vertex.texcoord;
   return os;
@@ -274,6 +290,7 @@ std::ostream& operator<<(std::ostream& os, const CGLTrace::drawcall_t& drawcall)
       os << std::endl << primitive;
     }
   }
+  os << std::endl << drawcall.viewport;
   return os;
 }
 
@@ -296,6 +313,7 @@ std::istream& operator>>(std::istream& is, CGLTrace::drawcall_t& drawcall) {
       is >> primitive;
     }
   }
+  is >> drawcall.viewport;
   return is;
 }
 

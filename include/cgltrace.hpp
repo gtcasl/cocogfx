@@ -92,6 +92,15 @@ public:
     float v;
   };
 
+  struct viewport_t {
+    int   left;
+    int   right;
+    int   top;
+    int   bottom;
+    float near;
+    float far;
+  };
+
   struct vertex_t {
     pos_t      pos;
     color_t    color;
@@ -150,6 +159,7 @@ public:
     uint32_t texture_id;
     std::unordered_map<uint32_t, vertex_t> vertices;
     std::vector<primitive_t> primitives;
+    viewport_t viewport;
   };
 
   std::vector<drawcall_t> drawcalls;

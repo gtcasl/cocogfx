@@ -1210,30 +1210,79 @@ void Rotate(TMatrix44<T> *pOut, T angle, T x, T y, T z) {
 
 ///////////////////////////////////////////////////////////////////////////////
 
-// Convert position from clip space to 2D homogenous device space
+// Convert position from clip space to normalized device coordinates
 template <typename T>
-void ClipTo2DH(TVector4<T>* out, const TVector4<T>& in, uint32_t width, uint32_t height) {    
-    auto rhw = (in.w != Zero<T>()) ? Inverse<T>(in.w) : Zero<T>();
-    out->x = width * (in.x + in.w) / 2;
-    out->y = height * (in.y + in.w) / 2;
-    out->z = in.z * rhw;
-    out->w = in.w;
+void ClipToNDC(TVector4<T>* out, const TVector4<T>& in) {
+  auto rhw = (in.w != Zero<T>()) ? Inverse<T>(in.w) : Zero<T>();
+  out->x = in.x * rhw;
+  out->y = in.y * rhw;
+  out->z = in.z * rhw;
+  out->w = rhw;
+}
+
+// Convert position from clip space to homogenous device coordinates
+template <typename T>
+void ClipToHDC(TVector4<T>* out, 
+               const TVector4<T>& in, 
+               int32_t left, 
+               int32_t right,
+               int32_t top, 
+               int32_t bottom,
+               T near,
+               T far) {    
+  auto minX   = static_cast<T>(left + right) / 2;
+  auto scaleX = static_cast<T>(right - left) / 2;
+
+  auto minY   = static_cast<T>(top + bottom) / 2;
+  auto scaleY = static_cast<T>(bottom - top) / 2;
+
+  auto minZ   = (near + far) / 2;
+  auto scaleZ = (far - near) / 2;
+
+  out->x = in.x * scaleX + in.w * minX;
+  out->y = in.y * scaleY + in.w * minY;
+  out->z = in.z * scaleZ + in.w * minZ;
+  out->w = in.w;
+}
+
+// Convert position from NDC space to screen space
+template <typename T>
+void NDCToScreen(TVector4<T>* out, 
+                 const TVector4<T>& in, 
+                 int32_t left, 
+                 int32_t right,
+                 int32_t top, 
+                 int32_t bottom,
+                 T near,
+                 T far) {
+  auto minX   = static_cast<T>(left + right) / 2;
+  auto scaleX = static_cast<T>(right - left) / 2;
+
+  auto minY   = static_cast<T>(top + bottom) / 2;
+  auto scaleY = static_cast<T>(bottom - top) / 2;
+
+  auto minZ   = (near + far) / 2;
+  auto scaleZ = (far - near) / 2;
+
+  out->x = in.x * scaleX + minX;
+  out->y = in.y * scaleY + minY;
+  out->z = in.z * scaleZ + minZ;
+  out->w = in.w;
 }
 
 // Convert position from clip space to screen space
 template <typename T>
-void ClipToScreen(TVector4<T>* out, const TVector4<T>& in, uint32_t width, uint32_t height) {
-    auto rhw = (in.w != Zero<T>()) ? Inverse<T>(in.w) : Zero<T>();
-    auto ndc_x = in.x * rhw;
-    auto ndc_y = in.y * rhw;
-    auto ndc_z = in.z * rhw;
-    auto ndc_w = in.w;
-
-    // NDC to screen
-    out->x = width * (ndc_x + One<T>()) / 2;
-    out->y = height * (ndc_y + One<T>()) / 2;
-    out->z = ndc_z;
-    out->w = ndc_w;
+void ClipToScreen(TVector4<T>* out, 
+                  const TVector4<T>& in, 
+                  int32_t left, 
+                  int32_t right,
+                  int32_t top, 
+                  int32_t bottom,
+                  T near, 
+                  T far) {
+  TVector4<T> tmp;
+  ClipToNDC<T>(&tmp, in);
+  NDCToScreen<T>(out, tmp, left, right, top, bottom, near, far);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1244,11 +1293,11 @@ void CalcBoundingBox(TRect<T>* pOut,
                      const TVector2<T>& v0, 
                      const TVector2<T>& v1, 
                      const TVector2<T>& v2) {
-    // Find min/max 
-    pOut->left   = static_cast<T>(std::min(v0.x, std::min(v1.x, v2.x)));
-    pOut->right  = static_cast<T>(std::max(v0.x, std::max(v1.x, v2.x)));
-    pOut->top    = static_cast<T>(std::min(v0.y, std::min(v1.y, v2.y)));
-    pOut->bottom = static_cast<T>(std::max(v0.y, std::max(v1.y, v2.y)));
+  // Find min/max 
+  pOut->left   = static_cast<T>(std::min(v0.x, std::min(v1.x, v2.x)));
+  pOut->right  = static_cast<T>(std::max(v0.x, std::max(v1.x, v2.x)));
+  pOut->top    = static_cast<T>(std::min(v0.y, std::min(v1.y, v2.y)));
+  pOut->bottom = static_cast<T>(std::max(v0.y, std::max(v1.y, v2.y)));
 }
 
 template <typename T>
