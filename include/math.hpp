@@ -1213,7 +1213,7 @@ void Rotate(TMatrix44<T> *pOut, T angle, T x, T y, T z) {
 // Convert position from clip space to 2D homogenous device space
 template <typename T>
 void ClipTo2DH(TVector4<T>* out, const TVector4<T>& in, uint32_t width, uint32_t height) {    
-    auto rhw = (in.w != Zero<T>()) ? (1.0f / in.w) : Zero<T>();
+    auto rhw = (in.w != Zero<T>()) ? Inverse<T>(in.w) : Zero<T>();
     out->x = width * (in.x + in.w) / 2;
     out->y = height * (in.y + in.w) / 2;
     out->z = in.z * rhw;
@@ -1223,15 +1223,15 @@ void ClipTo2DH(TVector4<T>* out, const TVector4<T>& in, uint32_t width, uint32_t
 // Convert position from clip space to screen space
 template <typename T>
 void ClipToScreen(TVector4<T>* out, const TVector4<T>& in, uint32_t width, uint32_t height) {
-    auto rhw = (in.w != Zero<T>()) ? (1.0f / in.w) : Zero<T>();
+    auto rhw = (in.w != Zero<T>()) ? Inverse<T>(in.w) : Zero<T>();
     auto ndc_x = in.x * rhw;
     auto ndc_y = in.y * rhw;
     auto ndc_z = in.z * rhw;
     auto ndc_w = in.w;
 
     // NDC to screen
-    out->x = width * (ndc_x + 1.0f) / 2;
-    out->y = height * (ndc_y + 1.0f) / 2;
+    out->x = width * (ndc_x + One<T>()) / 2;
+    out->y = height * (ndc_y + One<T>()) / 2;
     out->z = ndc_z;
     out->w = ndc_w;
 }
