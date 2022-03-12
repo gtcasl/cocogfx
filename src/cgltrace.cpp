@@ -22,105 +22,105 @@ namespace serialization {
 
 template<class Archive>
 void serialize(Archive & ar, CGLTrace::pos_t & pos, const unsigned int) {
-  ar & BOOST_SERIALIZATION_NVP(pos.x);
-  ar & BOOST_SERIALIZATION_NVP(pos.y);
-  ar & BOOST_SERIALIZATION_NVP(pos.z);
-  ar & BOOST_SERIALIZATION_NVP(pos.w);
+  ar & boost::serialization::make_nvp("x", pos.x);;
+  ar & boost::serialization::make_nvp("y", pos.y);;
+  ar & boost::serialization::make_nvp("z", pos.z);;
+  ar & boost::serialization::make_nvp("w", pos.w);;
 }
 
 template<class Archive>
 void serialize(Archive & ar, CGLTrace::color_t & color, const unsigned int) {
-  ar & BOOST_SERIALIZATION_NVP(color.r);
-  ar & BOOST_SERIALIZATION_NVP(color.g);
-  ar & BOOST_SERIALIZATION_NVP(color.b);
-  ar & BOOST_SERIALIZATION_NVP(color.a);
+  ar & boost::serialization::make_nvp("r", color.r);;
+  ar & boost::serialization::make_nvp("g", color.g);;
+  ar & boost::serialization::make_nvp("b", color.b);;
+  ar & boost::serialization::make_nvp("a", color.a);;
 }
 
 template<class Archive>
 void serialize(Archive & ar, CGLTrace::texcoord_t & texcoord, const unsigned int) {
-  ar & BOOST_SERIALIZATION_NVP(texcoord.u);
-  ar & BOOST_SERIALIZATION_NVP(texcoord.v);
+  ar & boost::serialization::make_nvp("u", texcoord.u);;
+  ar & boost::serialization::make_nvp("v", texcoord.v);;
 }
 
 template<class Archive>
 void serialize(Archive & ar, CGLTrace::vertex_t & vertex, const unsigned int) {
-  ar & BOOST_SERIALIZATION_NVP(vertex.pos);
-  ar & BOOST_SERIALIZATION_NVP(vertex.color);
-  ar & BOOST_SERIALIZATION_NVP(vertex.texcoord);
+  ar & boost::serialization::make_nvp("pos", vertex.pos);;
+  ar & boost::serialization::make_nvp("color", vertex.color);;
+  ar & boost::serialization::make_nvp("texcoord", vertex.texcoord);;
 }
 
 template<class Archive>
 void serialize(Archive & ar, CGLTrace::primitive_t & primitive, const unsigned int) {
-  ar & BOOST_SERIALIZATION_NVP(primitive.i0);
-  ar & BOOST_SERIALIZATION_NVP(primitive.i1);
-  ar & BOOST_SERIALIZATION_NVP(primitive.i2);
+  ar & boost::serialization::make_nvp("i0", primitive.i0);;
+  ar & boost::serialization::make_nvp("i1", primitive.i1);;
+  ar & boost::serialization::make_nvp("i2", primitive.i2);;
 }
 
 template<class Archive>
 void serialize(Archive & ar, CGLTrace::texture_t & texture, const unsigned int) {
-  ar & BOOST_SERIALIZATION_NVP(texture.format);
-  ar & BOOST_SERIALIZATION_NVP(texture.width);
-  ar & BOOST_SERIALIZATION_NVP(texture.height);
-  ar & BOOST_SERIALIZATION_NVP(texture.pixels);
+  ar & boost::serialization::make_nvp("format", texture.format);;
+  ar & boost::serialization::make_nvp("width", texture.width);;
+  ar & boost::serialization::make_nvp("height", texture.height);;
+  ar & boost::serialization::make_nvp("pixels", texture.pixels);;
 }
 
 template<class Archive>
 void serialize(Archive & ar, CGLTrace::viewport_t & viewport, const unsigned int) {
-  ar & BOOST_SERIALIZATION_NVP(viewport.left);
-  ar & BOOST_SERIALIZATION_NVP(viewport.right);
-  ar & BOOST_SERIALIZATION_NVP(viewport.top);
-  ar & BOOST_SERIALIZATION_NVP(viewport.bottom);
-  ar & BOOST_SERIALIZATION_NVP(viewport.near);
-  ar & BOOST_SERIALIZATION_NVP(viewport.far);
+  ar & boost::serialization::make_nvp("left", viewport.left);;
+  ar & boost::serialization::make_nvp("right", viewport.right);;
+  ar & boost::serialization::make_nvp("top", viewport.top);;
+  ar & boost::serialization::make_nvp("bottom", viewport.bottom);;
+  ar & boost::serialization::make_nvp("near", viewport.near);;
+  ar & boost::serialization::make_nvp("far", viewport.far);;
 }
 
 template<class Archive>
 void serialize(Archive & ar, CGLTrace::states_t & states, const unsigned int) {
-  ar & BOOST_SERIALIZATION_NVP(states.color_enabled);
-  ar & BOOST_SERIALIZATION_NVP(states.color_format);
-  ar & BOOST_SERIALIZATION_NVP(states.color_writemask);
+  ar & boost::serialization::make_nvp("color_enabled", states.color_enabled);;
+  ar & boost::serialization::make_nvp("color_format", states.color_format);;
+  ar & boost::serialization::make_nvp("color_writemask", states.color_writemask);;
 
-  ar & BOOST_SERIALIZATION_NVP(states.depth_test);
-  ar & BOOST_SERIALIZATION_NVP(states.depth_writemask);
-  ar & BOOST_SERIALIZATION_NVP(states.depth_format); 
-  ar & BOOST_SERIALIZATION_NVP(states.depth_func);
+  ar & boost::serialization::make_nvp("depth_test", states.depth_test);;
+  ar & boost::serialization::make_nvp("depth_writemask", states.depth_writemask);;
+  ar & boost::serialization::make_nvp("depth_format", states.depth_format);; 
+  ar & boost::serialization::make_nvp("depth_func", states.depth_func);;
 
-  ar & BOOST_SERIALIZATION_NVP(states.stencil_test);
-  ar & BOOST_SERIALIZATION_NVP(states.stencil_func);
-  ar & BOOST_SERIALIZATION_NVP(states.stencil_zpass);
-  ar & BOOST_SERIALIZATION_NVP(states.stencil_zfail);
-  ar & BOOST_SERIALIZATION_NVP(states.stencil_fail);
-  ar & BOOST_SERIALIZATION_NVP(states.stencil_ref);
-  ar & BOOST_SERIALIZATION_NVP(states.stencil_mask);
-  ar & BOOST_SERIALIZATION_NVP(states.stencil_writemask);
+  ar & boost::serialization::make_nvp("stencil_test", states.stencil_test);;
+  ar & boost::serialization::make_nvp("stencil_func", states.stencil_func);;
+  ar & boost::serialization::make_nvp("stencil_zpass", states.stencil_zpass);;
+  ar & boost::serialization::make_nvp("stencil_zfail", states.stencil_zfail);;
+  ar & boost::serialization::make_nvp("stencil_fail", states.stencil_fail);;
+  ar & boost::serialization::make_nvp("stencil_ref", states.stencil_ref);;
+  ar & boost::serialization::make_nvp("stencil_mask", states.stencil_mask);;
+  ar & boost::serialization::make_nvp("stencil_writemask", states.stencil_writemask);;
 
-  ar & BOOST_SERIALIZATION_NVP(states.texture_enabled);
-  ar & BOOST_SERIALIZATION_NVP(states.texture_envcolor);
-  ar & BOOST_SERIALIZATION_NVP(states.texture_envmode);
-  ar & BOOST_SERIALIZATION_NVP(states.texture_minfilter);
-  ar & BOOST_SERIALIZATION_NVP(states.texture_magfilter);
-  ar & BOOST_SERIALIZATION_NVP(states.texture_addressU);
-  ar & BOOST_SERIALIZATION_NVP(states.texture_addressV);
+  ar & boost::serialization::make_nvp("texture_enabled", states.texture_enabled);;
+  ar & boost::serialization::make_nvp("texture_envcolor", states.texture_envcolor);;
+  ar & boost::serialization::make_nvp("texture_envmode", states.texture_envmode);;
+  ar & boost::serialization::make_nvp("texture_minfilter", states.texture_minfilter);;
+  ar & boost::serialization::make_nvp("texture_magfilter", states.texture_magfilter);;
+  ar & boost::serialization::make_nvp("texture_addressU", states.texture_addressU);;
+  ar & boost::serialization::make_nvp("texture_addressV", states.texture_addressV);;
 
-  ar & BOOST_SERIALIZATION_NVP(states.blend_enabled);
-  ar & BOOST_SERIALIZATION_NVP(states.blend_src);
-  ar & BOOST_SERIALIZATION_NVP(states.blend_dst);
+  ar & boost::serialization::make_nvp("blend_enabled", states.blend_enabled);;
+  ar & boost::serialization::make_nvp("blend_src", states.blend_src);;
+  ar & boost::serialization::make_nvp("blend_dst", states.blend_dst);;
 }
 
 template<class Archive>
 void serialize(Archive & ar, CGLTrace::drawcall_t & drawcall, const unsigned int) {
-  ar & BOOST_SERIALIZATION_NVP(drawcall.states);
-  ar & BOOST_SERIALIZATION_NVP(drawcall.texture_id);
-  ar & BOOST_SERIALIZATION_NVP(drawcall.vertices);
-  ar & BOOST_SERIALIZATION_NVP(drawcall.primitives);
-  ar & BOOST_SERIALIZATION_NVP(drawcall.viewport);
+  ar & boost::serialization::make_nvp("states", drawcall.states);;
+  ar & boost::serialization::make_nvp("texture_id", drawcall.texture_id);;
+  ar & boost::serialization::make_nvp("vertices", drawcall.vertices);;
+  ar & boost::serialization::make_nvp("primitives", drawcall.primitives);;
+  ar & boost::serialization::make_nvp("viewport", drawcall.viewport);;
 }
 
 template<class Archive>
 void serialize(Archive & ar, CGLTrace & trace, const unsigned int) {
-  ar & BOOST_SERIALIZATION_NVP(trace.version);
-  ar & BOOST_SERIALIZATION_NVP(trace.drawcalls);
-  ar & BOOST_SERIALIZATION_NVP(trace.textures);
+  ar & boost::serialization::make_nvp("version", trace.version);;
+  ar & boost::serialization::make_nvp("drawcalls", trace.drawcalls);;
+  ar & boost::serialization::make_nvp("textures", trace.textures);;
 }
 
 }}
