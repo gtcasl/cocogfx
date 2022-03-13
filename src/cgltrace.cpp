@@ -137,12 +137,13 @@ void serialize(Archive & ar, CGLTrace::drawcall_t & drawcall, const unsigned int
 
 template <class Archive>
 void serialize(Archive & ar, CGLTrace & trace, const unsigned int) {
-  ar & make_nvp("version", trace.version);
   ar & make_nvp("drawcalls", trace.drawcalls);
   ar & make_nvp("textures", trace.textures);
 }
 
 }}
+
+BOOST_CLASS_VERSION(CGLTrace, 1)
 
 int CGLTrace::load(const char* filename) {
   std::ifstream ifs(filename, std::ios::in | std::ios::binary);
