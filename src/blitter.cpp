@@ -129,6 +129,12 @@ int cocogfx::GenerateMipmaps(std::vector<uint8_t>& dst_pixels,
                              uint32_t src_width,
                              uint32_t src_height,
                              int32_t src_pitch) {
+  if (nullptr == src_pixels 
+   || 0 == src_width 
+   || 0 == src_height 
+   || 0 == src_pitch)
+    return -1;
+  
   uint32_t bpp = Format::GetInfo(format).BytePerPixel;
   uint32_t src_logwidth  = log2ceil(src_width);
   uint32_t src_logheight = log2ceil(src_height);
@@ -138,19 +144,19 @@ int cocogfx::GenerateMipmaps(std::vector<uint8_t>& dst_pixels,
 
   mip_offsets.resize(num_mipmaps);
 
-  // Calculate mipmaps buffer size
+  // Calculate mipmaps buffer size and offsets
   uint32_t num_pixels = 0;
-  for (uint32_t lod = 0, w = src_width, h = src_height; lod < num_mipmaps; ++lod) {
-    assert((w > 0) || (w > 0));
+  for (uint32_t lod = 0, w = src_width, h = src_height; lod < num_mipmaps;) {
     uint32_t pw = std::max<int>(w, 1);
     uint32_t ph = std::max<int>(h, 1);
     mip_offsets.at(lod) = num_pixels;
     num_pixels += pw * ph;
     w >>= 1;
     h >>= 1;
+    ++lod;
   }
 
-  // allocate mipmap
+  // allocate destination buffer
   dst_pixels.resize(num_pixels * bpp);
 
   // generate mipmaps  
@@ -172,10 +178,9 @@ int cocogfx::GenerateMipmaps(std::vector<uint8_t>& dst_pixels,
     pDst += src_width * src_height * bpp;
 
     for (uint32_t lod = 1, w = (src_width/2), h = (src_height/2); lod < num_mipmaps;) {
-      assert((w > 0) || (w > 0));
       uint32_t pw = std::max<int>(w, 1);
       uint32_t ph = std::max<int>(h, 1);
-      for (uint32_t y = 0; y < pw; ++y) {
+      for (uint32_t y = 0; y < ph; ++y) {
         uint32_t v0 = 2 * y;
         uint32_t v1 = 2 * y + ((ph > 1) ? 1 : 0);
         
@@ -198,12 +203,12 @@ int cocogfx::GenerateMipmaps(std::vector<uint8_t>& dst_pixels,
                                 
           convert_to(pDst + (x + y * pw) * bpp, ColorARGB(a, r, g, b));
         }
-      } 
-      ++lod; 
+      }       
       pSrc = pDst;
       pDst += pw * ph * bpp;
-      w /= 2;
-      h /= 2;  
+      w >>= 1;
+      h >>= 1;  
+      ++lod;
     }
     assert(pDst == (dst_pixels.data() + dst_pixels.size()));
   }
