@@ -21,7 +21,7 @@ bool CGLTrace::texture_t::operator==(const CGLTrace::texture_t& rhs) const {
 namespace boost {
 namespace serialization {
 
-template<class Archive>
+template <class Archive>
 void serialize(Archive & ar, CGLTrace::pos_t & pos, const unsigned int) {
   ar & make_nvp("x", pos.x);
   ar & make_nvp("y", pos.y);
@@ -29,7 +29,7 @@ void serialize(Archive & ar, CGLTrace::pos_t & pos, const unsigned int) {
   ar & make_nvp("w", pos.w);
 }
 
-template<class Archive>
+template <class Archive>
 void serialize(Archive & ar, CGLTrace::color_t & color, const unsigned int) {
   ar & make_nvp("r", color.r);
   ar & make_nvp("g", color.g);
@@ -37,35 +37,53 @@ void serialize(Archive & ar, CGLTrace::color_t & color, const unsigned int) {
   ar & make_nvp("a", color.a);
 }
 
-template<class Archive>
+template <class Archive>
 void serialize(Archive & ar, CGLTrace::texcoord_t & texcoord, const unsigned int) {
   ar & make_nvp("u", texcoord.u);
   ar & make_nvp("v", texcoord.v);
 }
 
-template<class Archive>
+template <class Archive>
 void serialize(Archive & ar, CGLTrace::vertex_t & vertex, const unsigned int) {
   ar & make_nvp("pos", vertex.pos);
   ar & make_nvp("color", vertex.color);
   ar & make_nvp("texcoord", vertex.texcoord);
 }
 
-template<class Archive>
+template <class Archive>
 void serialize(Archive & ar, CGLTrace::primitive_t & primitive, const unsigned int) {
   ar & make_nvp("i0", primitive.i0);
   ar & make_nvp("i1", primitive.i1);
   ar & make_nvp("i2", primitive.i2);
 }
 
-template<class Archive>
-void serialize(Archive & ar, CGLTrace::texture_t & texture, const unsigned int) {
-  ar & make_nvp("format", texture.format);
-  ar & make_nvp("width", texture.width);
-  ar & make_nvp("height", texture.height);
-  ar & make_nvp("pixels", make_binary_object(texture.pixels.data(), texture.pixels.size()));
+template <class Archive>
+void save(Archive & ar, const CGLTrace::texture_t & texture, const unsigned int) {
+  ar << make_nvp("format", texture.format);
+  ar << make_nvp("width", texture.width);
+  ar << make_nvp("height", texture.height);
+  uint32_t pixels_size = texture.pixels.size();
+  ar << make_nvp("size", pixels_size);
+  ar << make_nvp("pixels", make_binary_object(texture.pixels.data(), texture.pixels.size()));
 }
 
-template<class Archive>
+template <class Archive>
+void load(Archive & ar, CGLTrace::texture_t & texture, const unsigned int) {
+  ar >> make_nvp("format", texture.format);
+  ar >> make_nvp("width", texture.width);
+  ar >> make_nvp("height", texture.height);
+  uint32_t pixels_size;
+  ar >> make_nvp("size", pixels_size);
+  texture.pixels.resize(pixels_size);
+  ar >> make_nvp("pixels", make_binary_object(texture.pixels.data(), texture.pixels.size()));
+}
+
+template <class Archive>
+void serialize(Archive & ar, CGLTrace::texture_t & texture, const unsigned int file_version) {
+  boost::serialization::split_free(ar, texture, file_version);
+}
+
+template <class Archive>
 void serialize(Archive & ar, CGLTrace::viewport_t & viewport, const unsigned int) {
   ar & make_nvp("left", viewport.left);
   ar & make_nvp("right", viewport.right);
@@ -75,7 +93,7 @@ void serialize(Archive & ar, CGLTrace::viewport_t & viewport, const unsigned int
   ar & make_nvp("far", viewport.far);
 }
 
-template<class Archive>
+template <class Archive>
 void serialize(Archive & ar, CGLTrace::states_t & states, const unsigned int) {
   ar & make_nvp("color_enabled", states.color_enabled);
   ar & make_nvp("color_format", states.color_format);
@@ -108,7 +126,7 @@ void serialize(Archive & ar, CGLTrace::states_t & states, const unsigned int) {
   ar & make_nvp("blend_dst", states.blend_dst);
 }
 
-template<class Archive>
+template <class Archive>
 void serialize(Archive & ar, CGLTrace::drawcall_t & drawcall, const unsigned int) {
   ar & make_nvp("states", drawcall.states);
   ar & make_nvp("texture_id", drawcall.texture_id);
@@ -117,7 +135,7 @@ void serialize(Archive & ar, CGLTrace::drawcall_t & drawcall, const unsigned int
   ar & make_nvp("viewport", drawcall.viewport);
 }
 
-template<class Archive>
+template <class Archive>
 void serialize(Archive & ar, CGLTrace & trace, const unsigned int) {
   ar & make_nvp("version", trace.version);
   ar & make_nvp("drawcalls", trace.drawcalls);
@@ -133,8 +151,13 @@ int CGLTrace::load(const char* filename) {
     return -1;
   }
 
-  boost::archive::xml_iarchive ia(ifs);
-  ia >> boost::serialization::make_nvp("cgltrace", *this);
+  try {
+    boost::archive::xml_iarchive ia(ifs);
+    ia >> boost::serialization::make_nvp("cgltrace", *this);
+  } catch (boost::archive::archive_exception & ex) {
+    std::cerr << "failed to load archive: " << filename << " - " << ex.what() << std::endl;
+    return -1;
+  }
 
   return 0;
 }
@@ -146,8 +169,13 @@ int CGLTrace::save(const char* filename) {
     return -1;
   }
 
-  boost::archive::xml_oarchive oa(ofs);
-  oa << boost::serialization::make_nvp("cgltrace", *this);
+  try {
+    boost::archive::xml_oarchive oa(ofs);
+    oa << boost::serialization::make_nvp("cgltrace", *this);
+  } catch (boost::archive::archive_exception & ex) {
+    std::cerr << "failed to save archive: " << filename << " - " << ex.what() << std::endl;
+    return -1;
+  }
 
   return 0;
 }
