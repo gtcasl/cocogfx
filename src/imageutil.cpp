@@ -27,11 +27,11 @@ static bool iequals(const std::string& a, const std::string& b) {
   return true;
 }
 
-int LoadImage(const char *filename,
-              ePixelFormat format, 
-              std::vector<uint8_t> &pixels, 
-              uint32_t *width,
-              uint32_t *height) {
+int cocogfx::LoadImage(const char *filename,
+                       ePixelFormat format, 
+                       std::vector<uint8_t> &pixels, 
+                       uint32_t *width,
+                       uint32_t *height) {
   uint32_t img_width;
   uint32_t img_height;
   uint32_t img_bpp;
@@ -89,12 +89,12 @@ int LoadImage(const char *filename,
   return 0;
 }
 
-int SaveImage(const char *filename,
-              ePixelFormat format,
-              const uint8_t* pixels, 
-              uint32_t width,
-              uint32_t height,
-              int32_t pitch) {
+int cocogfx::SaveImage(const char *filename,
+                       ePixelFormat format,
+                       const uint8_t* pixels, 
+                       uint32_t width,
+                       uint32_t height,
+                       int32_t pitch) {
   uint32_t bpp = Format::GetInfo(format).BytePerPixel;
   auto ext = getFileExt(filename);
   if (iequals(ext, "tga")) {
@@ -113,7 +113,7 @@ int SaveImage(const char *filename,
   return 0;
 }
 
-void dump_image(const std::vector<uint8_t>& pixels, uint32_t width, uint32_t height, uint32_t bpp) {
+void cocogfx::DumpImage(const std::vector<uint8_t>& pixels, uint32_t width, uint32_t height, uint32_t bpp) {
   assert(width * height * bpp == pixels.size());
   const uint8_t* pixel_bytes = pixels.data();
   for (uint32_t y = 0; y < height; ++y) {
@@ -130,10 +130,10 @@ void dump_image(const std::vector<uint8_t>& pixels, uint32_t width, uint32_t hei
   }
 }
 
-int CompareImages(const char* filename1, 
-                  const char* filename2, 
-                  cocogfx::ePixelFormat format,
-                  uint32_t tolerance) {
+int cocogfx::CompareImages(const char* filename1, 
+                           const char* filename2, 
+                           cocogfx::ePixelFormat format,
+                           uint32_t tolerance) {
   int ret;
   std::vector<uint8_t> image1_bits;  
   uint32_t image1_width; 

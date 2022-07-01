@@ -33,7 +33,7 @@ int SaveImage(const char *filename,
               uint32_t height,
               int32_t pitch);
 
-void dump_image(const std::vector<uint8_t>& pixels, 
+void DumpImage(const std::vector<uint8_t>& pixels, 
                 uint32_t width, 
                 uint32_t height, 
                 uint32_t bpp);
