@@ -1,6 +1,7 @@
 #pragma once
 
 #include "common.hpp"
+#include <iostream>
 
 namespace cocogfx {
 
@@ -418,6 +419,13 @@ public:
 
 private:
   T data_;
+
+  friend std::ostream& operator<<(std::ostream& out, const TFixed& in) {
+    std::ios_base::fmtflags f(out.flags());
+    out << std::hex << in.data_;
+    out.flags(f);
+    return out;
+  }
 };
 
 }
