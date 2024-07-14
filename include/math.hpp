@@ -57,7 +57,7 @@ template <typename T>
 struct TRect {
   enum { DIM = 4 };
 DISABLE_WARNING_PUSH
-DISABLE_WARNING_ANONYMOUS_STRUCT  
+DISABLE_WARNING_ANONYMOUS_STRUCT
   union {
     struct {
       T left;
@@ -69,14 +69,14 @@ DISABLE_WARNING_ANONYMOUS_STRUCT
       T m[DIM];
     };
   };
-DISABLE_WARNING_POP  
+DISABLE_WARNING_POP
 };
 
 template <typename T>
 struct TVector1 {
   enum { DIM = 1 };
 DISABLE_WARNING_PUSH
-DISABLE_WARNING_ANONYMOUS_STRUCT  
+DISABLE_WARNING_ANONYMOUS_STRUCT
   union {
     struct {
       T x;
@@ -96,7 +96,7 @@ template <typename T>
 struct TVector2 {
   enum { DIM = 2 };
 DISABLE_WARNING_PUSH
-DISABLE_WARNING_ANONYMOUS_STRUCT  
+DISABLE_WARNING_ANONYMOUS_STRUCT
   union {
     struct {
       T x, y;
@@ -116,7 +116,7 @@ template <typename T>
 struct TVector3 {
   enum { DIM = 3 };
 DISABLE_WARNING_PUSH
-DISABLE_WARNING_ANONYMOUS_STRUCT  
+DISABLE_WARNING_ANONYMOUS_STRUCT
   union {
     struct {
       T x, y, z;
@@ -136,7 +136,7 @@ template <typename T>
 struct TVector4 {
   enum { DIM = 4 };
 DISABLE_WARNING_PUSH
-DISABLE_WARNING_ANONYMOUS_STRUCT  
+DISABLE_WARNING_ANONYMOUS_STRUCT
   union {
     struct {
       T x, y, z, w;
@@ -174,9 +174,9 @@ DISABLE_WARNING_POP
 
   TMatrix44() {}
 
-  TMatrix44(T m11, T m12, T m13, T m14, 
-            T m21, T m22, T m23, T m24, 
-            T m31, T m32, T m33, T m34, 
+  TMatrix44(T m11, T m12, T m13, T m14,
+            T m21, T m22, T m23, T m24,
+            T m31, T m32, T m33, T m34,
             T m41, T m42, T m43, T m44) {
     this->_11 = m11;
     this->_12 = m12;
@@ -299,15 +299,20 @@ namespace cocogfx {
 
 namespace detail {
 
-template <typename Type, uint32_t Shift>
+template <typename Type, uint32_t Shift, bool = (Shift >= 32)>
 struct ShiftInverter {
 public:
   static Type call(int32_t value) {
-    if constexpr (Shift >= 32) {
-      return value ? static_cast<Type>((static_cast<int64_t>(1) << Shift) / value) : 0;
-    } else {
-      return static_cast<Type>((1 << Shift) / value);
-    }
+    return static_cast<Type>((1 << Shift) / value);
+  }
+};
+
+// ShiftInverter specialization for Shift >= 32
+template <typename Type, uint32_t Shift>
+struct ShiftInverter<Type, Shift, true> {
+public:
+  static Type call(int32_t value) {
+    return value ? static_cast<Type>((static_cast<int64_t>(1) << Shift) / value) : 0;
   }
 };
 
@@ -382,16 +387,16 @@ inline float RSqrt(float rhs) {
 ///////////////////////////////////////////////////////////////////////////////
 
 template <typename R>
-R Dot(float a0, float b0, 
-      float a1, float b1, 
-      float a2, float b2, 
+R Dot(float a0, float b0,
+      float a1, float b1,
+      float a2, float b2,
       float a3, float b3) {
   return static_cast<R>(a0 * b0 + a1 * b1 + a2 * b2 + a3 * b3);
 }
 
 template <typename R, uint32_t F1, uint32_t F2, typename T1, typename T2>
-R Dot(TFixed<F1,T1> a0, TFixed<F2,T2> b0, 
-      TFixed<F1,T1> a1, TFixed<F2,T2> b1, 
+R Dot(TFixed<F1,T1> a0, TFixed<F2,T2> b0,
+      TFixed<F1,T1> a1, TFixed<F2,T2> b1,
       TFixed<F1,T1> a2, TFixed<F2,T2> b2,
       TFixed<F1,T1> a3, TFixed<F2,T2> b3) {
   int FRAC = TFixed<F1,T1>::FRAC + TFixed<F2,T2>::FRAC - R::FRAC;
@@ -403,15 +408,15 @@ R Dot(TFixed<F1,T1> a0, TFixed<F2,T2> b0,
 }
 
 template <typename R>
-R Dot(float a0, float b0, 
-      float a1, float b1, 
+R Dot(float a0, float b0,
+      float a1, float b1,
       float a2, float b2) {
   return static_cast<R>(a0 * b0 + a1 * b1 + a2 * b2);
 }
 
 template <typename R, uint32_t F1, uint32_t F2, typename T1, typename T2>
-R Dot(TFixed<F1,T1> a0, TFixed<F2,T2> b0, 
-      TFixed<F1,T1> a1, TFixed<F2,T2> b1, 
+R Dot(TFixed<F1,T1> a0, TFixed<F2,T2> b0,
+      TFixed<F1,T1> a1, TFixed<F2,T2> b1,
       TFixed<F1,T1> a2, TFixed<F2,T2> b2) {
   int FRAC = TFixed<F1,T1>::FRAC + TFixed<F2,T2>::FRAC - R::FRAC;
   auto value = static_cast<int64_t>(a0.data()) * b0.data();
@@ -479,7 +484,7 @@ inline int32_t Lerp8(int32_t lhs, int32_t rhs, int32_t frac) {
 
 template <typename T>
 T Sat(T rhs) {
-  return std::clamp<T>(rhs, Zero<T>(), One<T>());
+  return std::min<T>(std::max<T>(rhs, Zero<T>()), One<T>());
 }
 
 template <typename T>
@@ -1222,14 +1227,14 @@ void ClipToNDC(TVector4<T>* out, const TVector4<T>& in) {
 
 // Convert position from clip space to homogenous device coordinates
 template <typename T>
-void ClipToHDC(TVector4<T>* out, 
-               const TVector4<T>& in, 
-               int32_t left, 
+void ClipToHDC(TVector4<T>* out,
+               const TVector4<T>& in,
+               int32_t left,
                int32_t right,
-               int32_t top, 
+               int32_t top,
                int32_t bottom,
                T near,
-               T far) {    
+               T far) {
   auto minX   = static_cast<T>(left + right) / 2;
   auto scaleX = static_cast<T>(right - left) / 2;
 
@@ -1247,11 +1252,11 @@ void ClipToHDC(TVector4<T>* out,
 
 // Convert position from NDC space to screen space
 template <typename T>
-void NDCToScreen(TVector4<T>* out, 
-                 const TVector4<T>& in, 
-                 int32_t left, 
+void NDCToScreen(TVector4<T>* out,
+                 const TVector4<T>& in,
+                 int32_t left,
                  int32_t right,
-                 int32_t top, 
+                 int32_t top,
                  int32_t bottom,
                  T near,
                  T far) {
@@ -1272,13 +1277,13 @@ void NDCToScreen(TVector4<T>* out,
 
 // Convert position from clip space to screen space
 template <typename T>
-void ClipToScreen(TVector4<T>* out, 
-                  const TVector4<T>& in, 
-                  int32_t left, 
+void ClipToScreen(TVector4<T>* out,
+                  const TVector4<T>& in,
+                  int32_t left,
                   int32_t right,
-                  int32_t top, 
+                  int32_t top,
                   int32_t bottom,
-                  T near, 
+                  T near,
                   T far) {
   TVector4<T> tmp;
   ClipToNDC<T>(&tmp, in);
@@ -1289,11 +1294,11 @@ void ClipToScreen(TVector4<T>* out,
 
 // Calculate triangle bounding box
 template <typename T>
-void CalcBoundingBox(TRect<T>* pOut, 
-                     const TVector2<T>& v0, 
-                     const TVector2<T>& v1, 
+void CalcBoundingBox(TRect<T>* pOut,
+                     const TVector2<T>& v0,
+                     const TVector2<T>& v1,
                      const TVector2<T>& v2) {
-  // Find min/max 
+  // Find min/max
   pOut->left   = static_cast<T>(std::min(v0.x, std::min(v1.x, v2.x)));
   pOut->right  = static_cast<T>(std::max(v0.x, std::max(v1.x, v2.x)));
   pOut->top    = static_cast<T>(std::min(v0.y, std::min(v1.y, v2.y)));
@@ -1302,9 +1307,9 @@ void CalcBoundingBox(TRect<T>* pOut,
 
 template <typename T>
 bool Intersect(const TRect<T> *pSrc1, const TRect<T> *pSrc2) {
-  return !(pSrc1->left >= pSrc2->right 
-        || pSrc1->right <= pSrc2->left 
-        || pSrc1->top >= pSrc2->bottom 
+  return !(pSrc1->left >= pSrc2->right
+        || pSrc1->right <= pSrc2->left
+        || pSrc1->top >= pSrc2->bottom
         || pSrc1->bottom <= pSrc2->top);
 }
 

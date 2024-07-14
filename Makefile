@@ -1,13 +1,13 @@
-CXXFLAGS += -std=c++17 -fPIC -Wall -Wextra -Wfatal-errors
+CXXFLAGS += -std=c++11 -fPIC -Wall -Wextra -Wfatal-errors
 
 CXXFLAGS += -Iinclude
 
-LDFLAGS += 
+LDFLAGS +=
 
 # Debugigng
 ifdef DEBUG
 	CXXFLAGS += -g -O0
-else    
+else
 	CXXFLAGS += -O2 -DNDEBUG
 endif
 
