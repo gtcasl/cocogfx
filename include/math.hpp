@@ -239,6 +239,10 @@ int32_t fxInvSqrt(int32_t x);
 int32_t fxPow(int32_t x, int32_t y);
 
 int32_t fxExp2(int32_t x);
+  
+inline int32_t Div255(int32_t x) {
+  return (x + (x >> 8)) >> 8;
+}  
 
 } // namespace cocogfx
 
