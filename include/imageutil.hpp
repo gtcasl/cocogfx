@@ -41,7 +41,7 @@ void DumpImage(const std::vector<uint8_t>& pixels,
 int CompareImages(const char* filename1,
                   const char* filename2,
                   cocogfx::ePixelFormat format,
-                  uint32_t max_errors,
-                  uint32_t tolerance = 0);
+                  uint32_t tolerance = 0,
+                  uint32_t max_errors = 255);
 
 }

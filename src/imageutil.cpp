@@ -133,8 +133,8 @@ void cocogfx::DumpImage(const std::vector<uint8_t>& pixels, uint32_t width, uint
 int cocogfx::CompareImages(const char* filename1,
                            const char* filename2,
                            cocogfx::ePixelFormat format,
-                           uint32_t max_errors,
-                           uint32_t tolerance) {
+                           uint32_t tolerance,
+                           uint32_t max_errors) {
   int ret;
   std::vector<uint8_t> image1_bits;
   uint32_t image1_width;
