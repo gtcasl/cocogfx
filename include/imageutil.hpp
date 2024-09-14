@@ -28,19 +28,20 @@ int LoadImage(const char *filename,
 
 int SaveImage(const char *filename,
               cocogfx::ePixelFormat format,
-              const uint8_t* pixels, 
+              const uint8_t* pixels,
               uint32_t width,
               uint32_t height,
               int32_t pitch);
 
-void DumpImage(const std::vector<uint8_t>& pixels, 
-                uint32_t width, 
-                uint32_t height, 
+void DumpImage(const std::vector<uint8_t>& pixels,
+                uint32_t width,
+                uint32_t height,
                 uint32_t bpp);
 
-int CompareImages(const char* filename1, 
-                  const char* filename2, 
+int CompareImages(const char* filename1,
+                  const char* filename2,
                   cocogfx::ePixelFormat format,
+                  uint32_t max_errors,
                   uint32_t tolerance = 0);
 
 }

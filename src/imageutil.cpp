@@ -28,8 +28,8 @@ static bool iequals(const std::string& a, const std::string& b) {
 }
 
 int cocogfx::LoadImage(const char *filename,
-                       ePixelFormat format, 
-                       std::vector<uint8_t> &pixels, 
+                       ePixelFormat format,
+                       std::vector<uint8_t> &pixels,
                        uint32_t *width,
                        uint32_t *height) {
   uint32_t img_width;
@@ -41,12 +41,12 @@ int cocogfx::LoadImage(const char *filename,
     int ret = LoadTGA(filename, pixels, &img_width, &img_height, &img_bpp);
     if (ret)
       return ret;
-  } else 
+  } else
   if (iequals(ext, "png")) {
     int ret = LoadPNG(filename, pixels, &img_width, &img_height, &img_bpp);
     if (ret)
       return ret;
-  } else 
+  } else
   if (iequals(ext, "bmp")) {
     int ret = LoadBMP(filename, pixels, &img_width, &img_height, &img_bpp);
     if (ret)
@@ -56,27 +56,27 @@ int cocogfx::LoadImage(const char *filename,
     return -1;
   }
 
-  ePixelFormat img_format;  
+  ePixelFormat img_format;
   switch (img_bpp) {
-  case 1: 
+  case 1:
     img_format = FORMAT_A8;
     break;
-  case 2: 
+  case 2:
     img_format = FORMAT_R5G6B5;
     break;
-  case 3: 
-    img_format = FORMAT_R8G8B8; 
+  case 3:
+    img_format = FORMAT_R8G8B8;
     break;
-  case 4: 
-    img_format = FORMAT_A8R8G8B8; 
+  case 4:
+    img_format = FORMAT_A8R8G8B8;
     break;
   default:
-    std::abort();            
+    std::abort();
   }
 
   if (img_format != format) {
     // format conversion to RGBA
-    std::vector<uint8_t> staging;    
+    std::vector<uint8_t> staging;
     int ret = ConvertImage(staging, format, pixels.data(), img_format, img_width, img_height, img_width * img_bpp);
     if (ret)
       return ret;
@@ -85,13 +85,13 @@ int cocogfx::LoadImage(const char *filename,
 
   *width  = img_width;
   *height = img_height;
-  
+
   return 0;
 }
 
 int cocogfx::SaveImage(const char *filename,
                        ePixelFormat format,
-                       const uint8_t* pixels, 
+                       const uint8_t* pixels,
                        uint32_t width,
                        uint32_t height,
                        int32_t pitch) {
@@ -99,10 +99,10 @@ int cocogfx::SaveImage(const char *filename,
   auto ext = getFileExt(filename);
   if (iequals(ext, "tga")) {
     return SaveTGA(filename, pixels, width, height, bpp, pitch);
-  } else 
+  } else
   if (iequals(ext, "png")) {
     return SavePNG(filename, pixels, width, height, bpp, pitch);
-  } else 
+  } else
   if (iequals(ext, "bmp")) {
     return SaveBMP(filename, pixels, width, height, bpp, pitch);
   } else {
@@ -130,24 +130,25 @@ void cocogfx::DumpImage(const std::vector<uint8_t>& pixels, uint32_t width, uint
   }
 }
 
-int cocogfx::CompareImages(const char* filename1, 
-                           const char* filename2, 
+int cocogfx::CompareImages(const char* filename1,
+                           const char* filename2,
                            cocogfx::ePixelFormat format,
+                           uint32_t max_errors,
                            uint32_t tolerance) {
   int ret;
-  std::vector<uint8_t> image1_bits;  
-  uint32_t image1_width; 
+  std::vector<uint8_t> image1_bits;
+  uint32_t image1_width;
   uint32_t image1_height;
 
-  std::vector<uint8_t> image2_bits;  
-  uint32_t image2_width; 
+  std::vector<uint8_t> image2_bits;
+  uint32_t image2_width;
   uint32_t image2_height;
-    
-  ret = cocogfx::LoadImage(filename1, format, image1_bits, &image1_width, &image1_height);  
+
+  ret = cocogfx::LoadImage(filename1, format, image1_bits, &image1_width, &image1_height);
   if (ret)
     return ret;
 
-  ret = cocogfx::LoadImage(filename2, format, image2_bits, &image2_width, &image2_height);  
+  ret = cocogfx::LoadImage(filename2, format, image2_bits, &image2_width, &image2_height);
   if (ret)
     return ret;
 
@@ -170,15 +171,17 @@ int cocogfx::CompareImages(const char* filename1,
       for (uint32_t x = 0; x < image1_width; ++x) {
         auto color1 = convert_from(pixels1);
         auto color2 = convert_from(pixels2);
-        if (abs(color1.r - color2.r) > tolerance 
+        if (abs(color1.r - color2.r) > tolerance
          || abs(color1.g - color2.g) > tolerance
          || abs(color1.b - color2.b) > tolerance
          || abs(color1.a - color2.a) > tolerance) {
-          printf("Error: pixel mismatch at (%d, %d), actual=0x%x, expected=0x%x\n", x, y, color1.value, color2.value);
+          printf("Error: pixel mismatch at (%d, %d), first=0x%x, second=0x%x\n", x, y, color1.value, color2.value);
           ++errors;
+          if (errors == max_errors)
+            return errors;
         }
         pixels1 += bpp;
-        pixels2 += bpp;    
+        pixels2 += bpp;
       }
     }
   }
